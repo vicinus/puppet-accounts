@@ -10,17 +10,23 @@ define accounts::user(
   $locked = false,
   $managehome = true,
   $managedefaultgroup = true,
+  $adduserdefaultgroup = false,
   $ssh_keys = [],
+  $purge_ssh_keys = true,
   $files = [],
+  $defaultfiles = [],
   $default_root_sudo = false,
   $sudoers = [],
+  $ssh_remote_access = [],
 ) {
   validate_re($ensure, '^(present|absent)$')
   if $uid != undef {
     validate_re($uid, '^\d+$')
   }
   if $gid != undef {
-    validate_re($gid, '^\d+$')
+    if $adduserdefaultgroup {
+      validate_re($gid, '^\d+$')
+    }
   }
   validate_re($shell, '^/')
   validate_string($comment)
@@ -28,6 +34,11 @@ define accounts::user(
   validate_array($groups)
   if $password != undef {
     validate_string($password)
+  }
+  if $adduserdefaultgroup {
+    $usergroupname = $name
+  } else {
+   $usergroupname = $gid
   }
 
   if $locked {
@@ -53,9 +64,10 @@ define accounts::user(
     groups => $groups,
     password => $password,
     managehome => $managehome,
+    purge_ssh_keys => $purge_ssh_keys,
   }
  
-  if $managedefaultgroup {
+  if $adduserdefaultgroup {
     group { $name:
       ensure => $ensure,
       gid    => $gid,
@@ -63,13 +75,15 @@ define accounts::user(
   }
 
   if $ensure == "present" {
-    Group[$name] -> User[$name]
+    if $managedefaultgroup {
+      Group[$usergroupname] -> User[$name]
+    }
     if $managehome {
       accounts::home_dir { $home:
         user => $name,
         uid => $uid,
         gid => $gid,
-        require => [ User[$name], Group[$name] ],
+        require => [ User[$name], Group[$usergroupname] ],
       }
     }
     $sudo_resource = $accounts::sudo_resource
@@ -81,11 +95,14 @@ define accounts::user(
       }})
     }
     create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), { user => $name, require => Accounts::Home_dir[$home] })
-    create_resources('accounts::file', make_hash($files, "${name}_", 'path'), { basedir => $home, owner => $uid, group => $gid })
+    create_resources('accounts::file', make_hash(concat($defaultfiles,$files), "${name}_", 'path'), { basedir => $home, owner => $uid, group => $gid })
     create_resources($sudo_resource, make_hash($sudoers, "${name}_"), { users => $name})
+    create_resources('accounts::ssh_remote_access', make_hash($ssh_remote_access, "${name}_"), { homedir => $home, user => $name, group => $gid })
   }
   if $ensure == "absent" {
-    User[$name] -> Group[$name]
+    if $managedefaultgroup {
+      User[$name] -> Group[$usergroupname]
+    }
     if $managehome == true {
       file { $home:
         ensure  => absent,
