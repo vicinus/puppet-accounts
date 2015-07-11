@@ -19,6 +19,8 @@ define accounts::home_dir(
     ensure => present,
     ensure_newline => true,
     force => true,
+    owner => $uid ? { /^\d+/ => $uid, default => $user },
+    group => $gid ? { /^\d+$/ => $gid, /^[a-z0-9]+/ => $gid, default => $user },
   }
 
   concat::fragment { "${name}_header_ssh_config":

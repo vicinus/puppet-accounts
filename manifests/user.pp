@@ -95,7 +95,7 @@ define accounts::user(
       }})
     }
     create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), { user => $name, require => Accounts::Home_dir[$home] })
-    create_resources('accounts::file', make_hash(concat($defaultfiles,$files), "${name}_", 'path'), { basedir => $home, owner => $uid, group => $gid })
+    create_resources('exfile', make_hash(concat($defaultfiles,$files), "${name}_", 'path'), { basedir => $home, owner => $uid, group => $gid })
     create_resources($sudo_resource, make_hash($sudoers, "${name}_"), { users => $name})
     create_resources('accounts::ssh_remote_access', make_hash($ssh_remote_access, "${name}_"), { homedir => $home, user => $name, group => $gid })
   }
