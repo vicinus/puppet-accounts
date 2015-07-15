@@ -1,4 +1,5 @@
 define accounts::ssh_remote_access (
+  $ensure = 'present',
   $user = undef,
   $group = undef,
   $homedir = undef,
@@ -9,19 +10,22 @@ define accounts::ssh_remote_access (
   $ssh_key_filename = undef,
 ) {
   if $homedir {
-    $sshdir = "$homedir/.ssh"
+    $real_homedir = $homedir
   } else {
-    $sshdir = "/home/$user/.ssh"
+    $real_homedir = "/home/$user"
   }
+  $sshdir = "$real_homedir/.ssh"
   if $ssh_key_filename {
     $real_ssh_key_filename = $ssh_key_filename
   } else {
     $real_ssh_key_filename = "$name.key"
   }
   file { "$sshdir/$real_ssh_key_filename":
+    ensure => $ensure,
     owner => $user,
     group => $group,
     mode => '0600',
+    require => Accounts::Home_dir[$real_homedir],
     content => "$key\n",
   }
   if $remote_host {
@@ -32,6 +36,7 @@ define accounts::ssh_remote_access (
       ], "")
     
     concat::fragment { "ssh_remote_access_$name":
+      ensure => $ensure,
       target => "$sshdir/config",
       content => $ssh_config_content,
       order => '10',
