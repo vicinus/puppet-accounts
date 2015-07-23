@@ -12,6 +12,7 @@ define accounts::user(
   $managedefaultgroup = true,
   $adduserdefaultgroup = false,
   $ssh_keys = [],
+  $ssh_keys_location = undef,
   $purge_ssh_keys = true,
   $files = [],
   $defaultfiles = [],
@@ -94,10 +95,13 @@ define accounts::user(
         tags => [ 'NOPASSWD' ],
       }})
     }
-    create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), { user => $name, require => Accounts::Home_dir[$home] })
-    create_resources('exfile', make_hash(concat($defaultfiles,$files), "${name}_", 'path'), { basedir => $home, owner => $uid, group => $gid })
-    create_resources($sudo_resource, make_hash($sudoers, "${name}_"), { users => $name})
-    create_resources('accounts::ssh_remote_access', make_hash($ssh_remote_access, "${name}_"), { homedir => $home, user => $name, group => $gid })
+    if $ssh_keys_location {
+      $real_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
+    }
+    create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), { user => $name, require => Accounts::Home_dir[$home], target => $real_ssh_keys_location, })
+    create_resources('exfile', make_hash(concat($defaultfiles,$files), "${name}_", 'path'), { basedir => $home, owner => $uid, group => $gid, })
+    create_resources($sudo_resource, make_hash($sudoers, "${name}_"), { users => $name, })
+    create_resources('accounts::ssh_remote_access', make_hash($ssh_remote_access, "${name}_"), { homedir => $home, user => $name, group => $gid, })
   }
   if $ensure == "absent" {
     if $managedefaultgroup {
