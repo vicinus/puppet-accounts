@@ -55,6 +55,11 @@ define accounts::user(
     $shell_real = $shell
   }
 
+  if versioncmp($clientversion, '2.6') == -1 {
+    $real_purge_ssh_keys = $purge_ssh_keys
+  } else {
+    $real_purge_ssh_keys = undef
+  }
   user { $name:
     ensure => $ensure,
     shell => $shell_real,
@@ -65,7 +70,7 @@ define accounts::user(
     groups => $groups,
     password => $password,
     managehome => $managehome,
-    purge_ssh_keys => $purge_ssh_keys,
+    purge_ssh_keys => $real_purge_ssh_keys,
   }
  
   if $adduserdefaultgroup {
