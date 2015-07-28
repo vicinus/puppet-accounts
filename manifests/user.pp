@@ -24,11 +24,6 @@ define accounts::user(
   if $uid != undef {
     validate_re($uid, '^\d+$')
   }
-  if $gid != undef {
-    if $adduserdefaultgroup {
-      validate_re($gid, '^\d+$')
-    }
-  }
   validate_re($shell, '^/')
   validate_string($comment)
   validate_re($home, '^/')
@@ -36,10 +31,10 @@ define accounts::user(
   if $password != undef {
     validate_string($password)
   }
-  if $adduserdefaultgroup {
+  if $gid =~ /^\d+$/ {
     $usergroupname = $name
   } else {
-   $usergroupname = $gid
+    $usergroupname = $gid
   }
 
   if $locked {
@@ -73,7 +68,7 @@ define accounts::user(
     purge_ssh_keys => $real_purge_ssh_keys,
   }
  
-  if $adduserdefaultgroup {
+  if $gid =~ /^\d+$/ {
     group { $name:
       ensure => $ensure,
       gid    => $gid,
@@ -89,7 +84,7 @@ define accounts::user(
         user => $name,
         uid => $uid,
         gid => $gid,
-        require => [ User[$name], Group[$usergroupname] ],
+        require => [ User[$name], ],
       }
     }
     $sudo_resource = $accounts::sudo_resource
