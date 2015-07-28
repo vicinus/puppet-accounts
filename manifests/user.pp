@@ -56,18 +56,18 @@ define accounts::user(
     $real_purge_ssh_keys = undef
   }
   user { $name:
-    ensure => $ensure,
-    shell => $shell_real,
-    comment => $comment,
-    home => $home,
-    uid => $uid,
-    gid => $gid,
-    groups => $groups,
-    password => $password,
-    managehome => $managehome,
+    ensure         => $ensure,
+    shell          => $shell_real,
+    comment        => $comment,
+    home           => $home,
+    uid            => $uid,
+    gid            => $gid,
+    groups         => $groups,
+    password       => $password,
+    managehome     => $managehome,
     purge_ssh_keys => $real_purge_ssh_keys,
   }
- 
+
   if $gid =~ /^\d+$/ {
     group { $name:
       ensure => $ensure,
@@ -75,15 +75,15 @@ define accounts::user(
     }
   }
 
-  if $ensure == "present" {
+  if $ensure == 'present' {
     if $managedefaultgroup {
       Group[$usergroupname] -> User[$name]
     }
     if $managehome {
       accounts::home_dir { $home:
-        user => $name,
-        uid => $uid,
-        gid => $gid,
+        user    => $name,
+        uid     => $uid,
+        gid     => $gid,
         require => [ User[$name], ],
       }
     }
@@ -98,12 +98,30 @@ define accounts::user(
     if $ssh_keys_location {
       $real_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
     }
-    create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), { user => $name, require => Accounts::Home_dir[$home], target => $real_ssh_keys_location, })
-    create_resources('exfile', make_hash(concat($defaultfiles,$files), "${name}_", 'path'), { basedir => $home, owner => $uid, group => $gid, })
-    create_resources($sudo_resource, make_hash($sudoers, "${name}_"), { users => $name, })
-    create_resources('accounts::ssh_remote_access', make_hash($ssh_remote_access, "${name}_"), { homedir => $home, user => $name, group => $gid, })
+    create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), {
+      user => $name,
+      require => Accounts::Home_dir[$home],
+      target => $real_ssh_keys_location,
+    })
+    create_resources('exfile',
+      make_hash(concat($defaultfiles,$files), "${name}_", 'path'), {
+        basedir => $home,
+        owner => $uid,
+        group => $gid,
+      }
+    )
+    create_resources($sudo_resource,
+        make_hash($sudoers, "${name}_"), { users => $name, })
+
+    create_resources('accounts::ssh_remote_access',
+      make_hash($ssh_remote_access, "${name}_"), {
+        homedir => $home,
+        user => $name,
+        group => $gid,
+      }
+    )
   }
-  if $ensure == "absent" {
+  if $ensure == 'absent' {
     if $managedefaultgroup {
       User[$name] -> Group[$usergroupname]
     }
