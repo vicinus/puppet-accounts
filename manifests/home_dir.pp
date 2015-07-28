@@ -5,7 +5,7 @@ define accounts::home_dir(
 ) {
   $owner = $uid ? { /^\d+/ => $uid, default => $user }
   $group = $gid ? { /^\d+$/ => $gid, /^[a-z0-9]+/ => $gid, default => $user }
-  File { owner => $owner, group => $group, default => $user }, mode => '0644' }
+  File { owner => $owner, group => $group, mode => '0644', }
 
   file { [$name, "${name}/.ssh"]:
     ensure => directory,
