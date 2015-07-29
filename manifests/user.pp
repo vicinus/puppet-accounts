@@ -31,10 +31,12 @@ define accounts::user(
   if $password != undef {
     validate_string($password)
   }
-  if $gid !~ /^\d+$/ {
-    $usergroupname = $name
-  } else {
-    $usergroupname = $gid
+  if $gid {
+    if $gid =~ /^\d+$/ {
+      $usergroupname = $name
+    } else {
+      $usergroupname = $gid
+    }
   }
 
   if $locked {
