@@ -31,7 +31,7 @@ define accounts::user(
   if $password != undef {
     validate_string($password)
   }
-  if $gid =~ /^\d+$/ {
+  if $gid !~ /^\d+$/ {
     $usergroupname = $name
   } else {
     $usergroupname = $gid
@@ -76,7 +76,7 @@ define accounts::user(
   }
 
   if $ensure == 'present' {
-    if $managedefaultgroup {
+    if $managedefaultgroup and $gid {
       Group[$usergroupname] -> User[$name]
     }
     if $managehome {
@@ -122,7 +122,7 @@ define accounts::user(
     )
   }
   if $ensure == 'absent' {
-    if $managedefaultgroup {
+    if $managedefaultgroup and $gid {
       User[$name] -> Group[$usergroupname]
     }
     if $managehome == true {
