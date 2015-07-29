@@ -50,7 +50,7 @@ define accounts::user(
     $shell_real = $shell
   }
 
-  if versioncmp($clientversion, '2.6') == -1 {
+  if versioncmp($clientversion, '3.6') == -1 {
     $real_purge_ssh_keys = $purge_ssh_keys
   } else {
     $real_purge_ssh_keys = undef
