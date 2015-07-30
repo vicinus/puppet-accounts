@@ -10,7 +10,6 @@ define accounts::user(
   $locked = false,
   $managehome = true,
   $managedefaultgroup = true,
-  $adduserdefaultgroup = false,
   $ssh_keys = [],
   $ssh_keys_location = undef,
   $purge_ssh_keys = true,
@@ -78,14 +77,13 @@ define accounts::user(
   }
 
   if $ensure == 'present' {
-    if $managedefaultgroup and $gid {
+    if ($managedefaultgroup and $gid) or $gid =~ /^\d+$/ {
       Group[$usergroupname] -> User[$name]
     }
     if $managehome {
       accounts::home_dir { $home:
         user    => $name,
-        uid     => $uid,
-        gid     => $gid,
+        group   => $usergroupname,
         require => [ User[$name], ],
       }
     }
@@ -124,7 +122,7 @@ define accounts::user(
     )
   }
   if $ensure == 'absent' {
-    if $managedefaultgroup and $gid {
+    if ($managedefaultgroup and $gid) or $gid =~ /^\d+$/ {
       User[$name] -> Group[$usergroupname]
     }
     if $managehome == true {
