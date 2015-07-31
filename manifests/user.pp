@@ -97,10 +97,20 @@ define accounts::user(
     }
     if $ssh_keys_location {
       $real_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
+      file { $real_ssh_keys_location:
+        ensure => file,
+        owner => $name,
+        group => $usergroupname,
+        mode => '0600',
+        replace => false,
+      }
+      $ssh_keys_require = File[$real_ssh_keys_location]
+    } else {
+      $ssh_keys_require = Accounts::Home_dir[$home]
     }
     create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), {
       user => $name,
-      require => Accounts::Home_dir[$home],
+      require => $ssh_keys_require,
       target => $real_ssh_keys_location,
     })
     create_resources('exfile',
