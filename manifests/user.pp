@@ -3,7 +3,7 @@ define accounts::user(
   $uid = undef,
   $gid = undef,
   $shell = '/bin/bash',
-  $comment = $name,
+  $comment = undef,
   $home = "/home/${name}",
   $groups = [],
   $password = '!',
