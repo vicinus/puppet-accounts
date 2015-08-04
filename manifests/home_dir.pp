@@ -1,11 +1,8 @@
 define accounts::home_dir(
   $user,
-  $uid,
-  $gid,
+  $group = undef,
 ) {
-  $owner = $uid ? { /^\d+/ => $uid, default => $user }
-  $group = $gid ? { /^\d+$/ => $gid, /^[a-z0-9]+/ => $gid, default => $user }
-  File { owner => $owner, group => $group, mode => '0644', }
+  File { owner => $user, group => $group, mode => '0644', }
 
   file { [$name, "${name}/.ssh"]:
     ensure => directory,
@@ -21,11 +18,11 @@ define accounts::home_dir(
     ensure         => present,
     ensure_newline => true,
     force          => true,
-    owner          => $owner,
+    owner          => $user,
     group          => $group,
   }
 
-  concat::fragment { "${name}_header_ssh_config":
+  concat::fragment { "${user}_header_ssh_config":
     target  => "${name}/.ssh/config",
     content => "# Managed with puppet\n",
     order   => '01',

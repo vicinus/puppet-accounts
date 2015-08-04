@@ -10,7 +10,6 @@ define accounts::user(
   $locked = false,
   $managehome = true,
   $managedefaultgroup = true,
-  $adduserdefaultgroup = false,
   $ssh_keys = [],
   $ssh_keys_location = undef,
   $purge_ssh_keys = true,
@@ -31,10 +30,12 @@ define accounts::user(
   if $password != undef {
     validate_string($password)
   }
-  if $gid !~ /^\d+$/ {
-    $usergroupname = $name
-  } else {
-    $usergroupname = $gid
+  if $gid {
+    if $gid =~ /^\d+$/ {
+      $usergroupname = $name
+    } else {
+      $usergroupname = $gid
+    }
   }
 
   if $locked {
@@ -76,14 +77,13 @@ define accounts::user(
   }
 
   if $ensure == 'present' {
-    if $managedefaultgroup and $gid {
+    if ($managedefaultgroup and $gid) or $gid =~ /^\d+$/ {
       Group[$usergroupname] -> User[$name]
     }
     if $managehome {
       accounts::home_dir { $home:
         user    => $name,
-        uid     => $uid,
-        gid     => $gid,
+        group   => $usergroupname,
         require => [ User[$name], ],
       }
     }
@@ -97,10 +97,20 @@ define accounts::user(
     }
     if $ssh_keys_location {
       $real_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
+      file { $real_ssh_keys_location:
+        ensure => file,
+        owner => $name,
+        group => $usergroupname,
+        mode => '0600',
+        replace => false,
+      }
+      $ssh_keys_require = File[$real_ssh_keys_location]
+    } else {
+      $ssh_keys_require = Accounts::Home_dir[$home]
     }
     create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), {
       user => $name,
-      require => Accounts::Home_dir[$home],
+      require => $ssh_keys_require,
       target => $real_ssh_keys_location,
     })
     create_resources('exfile',
@@ -122,7 +132,7 @@ define accounts::user(
     )
   }
   if $ensure == 'absent' {
-    if $managedefaultgroup and $gid {
+    if ($managedefaultgroup and $gid) or $gid =~ /^\d+$/ {
       User[$name] -> Group[$usergroupname]
     }
     if $managehome == true {
