@@ -87,13 +87,12 @@ define accounts::user(
         require => [ User[$name], ],
       }
     }
-    $sudo_resource = $accounts::sudo_resource
     if ($default_root_sudo) {
-      create_resources($sudo_resource, { "${name}_root" => {
+      accounts::sudoers { "${name}_root":
         ensure => 'present',
-        users => $name,
+        user => $name,
         tags => [ 'NOPASSWD' ],
-      }})
+      }
     }
     if $ssh_keys_location {
       $real_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
@@ -120,8 +119,8 @@ define accounts::user(
         group => $gid,
       }
     )
-    create_resources($sudo_resource,
-        make_hash($sudoers, "${name}_"), { users => $name, })
+    create_resources('accounts::sudoers', make_hash($sudoers, "${name}_"),
+        { user => $name, })
 
     create_resources('accounts::ssh_remote_access',
       make_hash($ssh_remote_access, "${name}_"), {

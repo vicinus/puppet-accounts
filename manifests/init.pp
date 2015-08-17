@@ -6,13 +6,10 @@ class accounts (
   $managed_users_defaults = undef,
   $managed_users_global_defaults = undef,
   $managed_usergroups = undef,
-  $manage_sudoers  = false,
-  $sudo_class = 'sudo',
-  $sudo_resource = 'sudo::sudoers',
+  $sudoersd = '/etc/sudoers.d',
 ) {
   validate_bool($manage_groups)
   validate_bool($manage_users)
-  validate_bool($manage_sudoers)
 
   if $manage_groups {
     if $managed_groups {
@@ -60,10 +57,5 @@ class accounts (
         fail("accounts::managed_usergroups must either be an array or a hash, not: ${managed_usergroups}")
       }
     }
-  }
-
-
-  if $manage_sudoers {
-    include $sudo_class
   }
 }
