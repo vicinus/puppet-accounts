@@ -105,6 +105,7 @@ define accounts::user(
       }
       $ssh_keys_require = File[$real_ssh_keys_location]
     } else {
+      $real_ssh_keys_location = undef
       $ssh_keys_require = Accounts::Home_dir[$home]
     }
     create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), {
