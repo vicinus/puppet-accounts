@@ -6,7 +6,7 @@ define accounts::user(
   $comment = undef,
   $home = "/home/${name}",
   $groups = [],
-  $password = '!',
+  $password = undef,
   $locked = false,
   $managehome = true,
   $managedefaultgroup = true,
