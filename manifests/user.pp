@@ -17,8 +17,15 @@ define accounts::user(
   $defaultfiles = [],
   $default_root_sudo = false,
   $sudoers = [],
-  $ssh_remote_access = [],
+  $ssh_config = [],
+  $manage_ssh_config = undef,
 ) {
+  include ::accounts
+  if $manage_ssh_config {
+    $real_manage_ssh_config = $manage_ssh_config
+  } else {
+    $real_manage_ssh_config = $::accounts::manage_ssh_config
+  }
   validate_re($ensure, '^(present|absent)$')
   if $uid != undef {
     validate_re($uid, '^\d+$')
@@ -84,6 +91,7 @@ define accounts::user(
       accounts::home_dir { $home:
         user    => $name,
         group   => $usergroupname,
+        manage_ssh_config => $real_manage_ssh_config,
         require => [ User[$name], ],
       }
     }
@@ -123,10 +131,11 @@ define accounts::user(
     create_resources('accounts::sudoers', make_hash($sudoers, "${name}_"),
         { user => $name, })
 
-    create_resources('accounts::ssh_remote_access',
-      make_hash($ssh_remote_access, "${name}_"), {
+    create_resources('accounts::ssh_config',
+      make_hash($ssh_config, "${name}_"), {
         homedir => $home,
-        user => $name,
+        username => $name,
+        manage_ssh_config => $real_manage_ssh_config,
         group => $gid,
       }
     )

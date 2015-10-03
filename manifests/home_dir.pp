@@ -1,5 +1,6 @@
 define accounts::home_dir(
   $user,
+  $manage_ssh_config = undef,
   $group = undef,
 ) {
   File { owner => $user, group => $group, mode => '0644', }
@@ -14,18 +15,19 @@ define accounts::home_dir(
     mode   => '0600',
   }
 
-  concat { "${name}/.ssh/config":
-    ensure         => present,
-    ensure_newline => true,
-    force          => true,
-    owner          => $user,
-    group          => $group,
-  }
+  if $manage_ssh_config {
+    concat { "${name}/.ssh/config":
+      ensure         => present,
+      ensure_newline => true,
+      force          => true,
+      owner          => $user,
+      group          => $group,
+    }
 
-  concat::fragment { "${user}_header_ssh_config":
-    target  => "${name}/.ssh/config",
-    content => "# Managed with puppet\n",
-    order   => '01',
+    concat::fragment { "${user}_header_ssh_config":
+      target  => "${name}/.ssh/config",
+      content => "# Managed with puppet\n",
+      order   => '01',
+    }
   }
 }
-

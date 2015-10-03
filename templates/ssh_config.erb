@@ -1,0 +1,264 @@
+<%- if @host then -%>
+Host <%= @host %>
+  <%- if @address_family then -%>
+  AddressFamily <%= @address_family %>
+  <%- end -%>
+  <%- if @batch_mode then -%>
+  BatchMode <%= @batch_mode %>
+  <%- end -%>
+  <%- if @bind_address then -%>
+  BindAddress <%= @bind_address %>
+  <%- end -%>
+  <%- if @canonical_domains then -%>
+  CanonicalDomains <%= @canonical_domains %>
+  <%- end -%>
+  <%- if @canonicalize_fallback_local then -%>
+  CanonicalizeFallbackLocal <%= @canonicalize_fallback_local %>
+  <%- end -%>
+  <%- if @canonicalize_hostname then -%>
+  CanonicalizeHostname <%= @canonicalize_hostname %>
+  <%- end -%>
+  <%- if @canonicalize_max_dots then -%>
+  CanonicalizeMaxDots <%= @canonicalize_max_dots %>
+  <%- end -%>
+  <%- if @canonicalize_permitted_cnames then -%>
+  CanonicalizePermittedCNAMEs <%= @canonicalize_permitted_cnames %>
+  <%- end -%>
+  <%- if @challenge_response_authentication then -%>
+  ChallengeResponseAuthentication <%= @challenge_response_authentication %>
+  <%- end -%>
+  <%- if @check_host_ip then -%>
+  CheckHostIP <%= @check_host_ip %>
+  <%- end -%>
+  <%- if @cipher then -%>
+  Cipher <%= @cipher %>
+  <%- end -%>
+  <%- if @clear_all_forwardings then -%>
+  ClearAllForwardings <%= @clear_all_forwardings %>
+  <%- end -%>
+  <%- if @compression then -%>
+  Compression <%= @compression %>
+  <%- end -%>
+  <%- if @compression_level then -%>
+  CompressionLevel <%= @compression_level %>
+  <%- end -%>
+  <%- if @connection_attempts then -%>
+  ConnectionAttempts <%= @connection_attempts %>
+  <%- end -%>
+  <%- if @connect_timeout then -%>
+  ConnectTimeout <%= @connect_timeout %>
+  <%- end -%>
+  <%- if @control_master then -%>
+  ControlMaster <%= @control_master %>
+  <%- end -%>
+  <%- if @control_path then -%>
+  ControlPath <%= @control_path %>
+  <%- end -%>
+  <%- if @control_persist then -%>
+  ControlPersist <%= @control_persist %>
+  <%- end -%>
+  <%- if @dynamic_forward then -%>
+  DynamicForward <%= @dynamic_forward %>
+  <%- end -%>
+  <%- if @enable_ssh_keysign then -%>
+  EnableSSHKeysign <%= @enable_ssh_keysign %>
+  <%- end -%>
+  <%- if @escape_char then -%>
+  EscapeChar <%= @escape_char %>
+  <%- end -%>
+  <%- if @exit_on_forward_failure then -%>
+  ExitOnForwardFailure <%= @exit_on_forward_failure %>
+  <%- end -%>
+  <%- if @fingerprint_hash then -%>
+  FingerprintHash <%= @fingerprint_hash %>
+  <%- end -%>
+  <%- if @forward_agent then -%>
+  ForwardAgent <%= @forward_agent %>
+  <%- end -%>
+  <%- if @forward_x11 then -%>
+  ForwardX11 <%= @forward_x11 %>
+  <%- end -%>
+  <%- if @forward_x11_timeout then -%>
+  ForwardX11Timeout <%= @forward_x11_timeout %>
+  <%- end -%>
+  <%- if @forward_x11_trusted then -%>
+  ForwardX11Trusted <%= @forward_x11_trusted %>
+  <%- end -%>
+  <%- if @gateway_ports then -%>
+  GatewayPorts <%= @gateway_ports %>
+  <%- end -%>
+  <%- if @global_known_hosts_file then -%>
+  GlobalKnownHostsFile <%= @global_known_hosts_file %>
+  <%- end -%>
+  <%- if @gssapi_authentication then -%>
+  GSSAPIAuthentication <%= @gssapi_authentication %>
+  <%- end -%>
+  <%- if @gssapi_key_exchange then -%>
+  GSSAPIKeyExchange <%= @gssapi_key_exchange %>
+  <%- end -%>
+  <%- if @gssapi_client_identity then -%>
+  GSSAPIClientIdentity <%= @gssapi_client_identity %>
+  <%- end -%>
+  <%- if @gssapi_server_identity then -%>
+  GSSAPIServerIdentity <%= @gssapi_server_identity %>
+  <%- end -%>
+  <%- if @gssapi_delegate_credentials then -%>
+  GSSAPIDelegateCredentials <%= @gssapi_delegate_credentials %>
+  <%- end -%>
+  <%- if @gssapi_renewal_forces_rekey then -%>
+  GSSAPIRenewalForcesRekey <%= @gssapi_renewal_forces_rekey %>
+  <%- end -%>
+  <%- if @gssapi_trust_dns then -%>
+  GSSAPITrustDns <%= @gssapi_trust_dns %>
+  <%- end -%>
+  <%- if @hash_known_hosts then -%>
+  HashKnownHosts <%= @hash_known_hosts %>
+  <%- end -%>
+  <%- if @hostbased_authentication then -%>
+  HostbasedAuthentication <%= @hostbased_authentication %>
+  <%- end -%>
+  <%- if @hostbased_key_types then -%>
+  HostbasedKeyTypes <%= @hostbased_key_types %>
+  <%- end -%>
+  <%- if @host_key_algorithms then -%>
+  HostKeyAlgorithms <%= @host_key_algorithms %>
+  <%- end -%>
+  <%- if @host_key_alias then -%>
+  HostKeyAlias <%= @host_key_alias %>
+  <%- end -%>
+  <%- if @host_name then -%>
+  HostName <%= @host_name %>
+  <%- end -%>
+  <%- if @identities_only then -%>
+  IdentitiesOnly <%= @identities_only %>
+  <%- end -%>
+  <%- if @real_identity_file then -%>
+  IdentityFile <%= @real_identity_file %>
+  <%- end -%>
+  <%- if @ignore_unknown then -%>
+  IgnoreUnknown <%= @ignore_unknown %>
+  <%- end -%>
+  <%- if @ipqos then -%>
+  IPQoS <%= @ipqos %>
+  <%- end -%>
+  <%- if @kbd_interactive_authentication then -%>
+  KbdInteractiveAuthentication <%= @kbd_interactive_authentication %>
+  <%- end -%>
+  <%- if @kbd_interactive_devices then -%>
+  KbdInteractiveDevices <%= @kbd_interactive_devices %>
+  <%- end -%>
+  <%- if @kex_algorithms then -%>
+  KexAlgorithms <%= @kex_algorithms %>
+  <%- end -%>
+  <%- if @local_command then -%>
+  LocalCommand <%= @local_command %>
+  <%- end -%>
+  <%- if @local_forward then -%>
+  LocalForward <%= @local_forward %>
+  <%- end -%>
+  <%- if @log_level then -%>
+  LogLevel <%= @log_level %>
+  <%- end -%>
+  <%- if @macs then -%>
+  MACs <%= @macs %>
+  <%- end -%>
+  <%- if @no_host_authentication_for_localhost then -%>
+  NoHostAuthenticationForLocalhost <%= @no_host_authentication_for_localhost %>
+  <%- end -%>
+  <%- if @number_of_password_prompts then -%>
+  NumberOfPasswordPrompts <%= @number_of_password_prompts %>
+  <%- end -%>
+  <%- if @password_authentication then -%>
+  PasswordAuthentication <%= @password_authentication %>
+  <%- end -%>
+  <%- if @permit_local_command then -%>
+  PermitLocalCommand <%= @permit_local_command %>
+  <%- end -%>
+  <%- if @pkcs11_provider then -%>
+  PKCS11Provider <%= @pkcs11_provider %>
+  <%- end -%>
+  <%- if @port then -%>
+  Port <%= @port %>
+  <%- end -%>
+  <%- if @preferred_authentications then -%>
+  PreferredAuthentications <%= @preferred_authentications %>
+  <%- end -%>
+  <%- if @protocol then -%>
+  Protocol <%= @protocol %>
+  <%- end -%>
+  <%- if @proxy_command then -%>
+  ProxyCommand <%= @proxy_command %>
+  <%- end -%>
+  <%- if @proxy_use_fdpass then -%>
+  ProxyUseFdpass <%= @proxy_use_fdpass %>
+  <%- end -%>
+  <%- if @pubkey_authentication then -%>
+  PubkeyAuthentication <%= @pubkey_authentication %>
+  <%- end -%>
+  <%- if @rekey_limit then -%>
+  RekeyLimit <%= @rekey_limit %>
+  <%- end -%>
+  <%- if @remote_forward then -%>
+  RemoteForward <%= @remote_forward %>
+  <%- end -%>
+  <%- if @request_tty then -%>
+  RequestTTY <%= @request_tty %>
+  <%- end -%>
+  <%- if @revoked_host_keys then -%>
+  RevokedHostKeys <%= @revoked_host_keys %>
+  <%- end -%>
+  <%- if @rhosts_rsa_authentication then -%>
+  RhostsRSAAuthentication <%= @rhosts_rsa_authentication %>
+  <%- end -%>
+  <%- if @rsa_authentication then -%>
+  RSAAuthentication <%= @rsa_authentication %>
+  <%- end -%>
+  <%- if @send_env then -%>
+  SendEnv <%= @send_env %>
+  <%- end -%>
+  <%- if @server_alive_count_max then -%>
+  ServerAliveCountMax <%= @server_alive_count_max %>
+  <%- end -%>
+  <%- if @server_alive_interval then -%>
+  ServerAliveInterval <%= @server_alive_interval %>
+  <%- end -%>
+  <%- if @stream_local_bind_mask then -%>
+  StreamLocalBindMask <%= @stream_local_bind_mask %>
+  <%- end -%>
+  <%- if @stream_local_bind_unlink then -%>
+  StreamLocalBindUnlink <%= @stream_local_bind_unlink %>
+  <%- end -%>
+  <%- if @strict_host_key_checking then -%>
+  StrictHostKeyChecking <%= @strict_host_key_checking %>
+  <%- end -%>
+  <%- if @tcp_keep_alive then -%>
+  TCPKeepAlive <%= @tcp_keep_alive %>
+  <%- end -%>
+  <%- if @tunnel then -%>
+  Tunnel <%= @tunnel %>
+  <%- end -%>
+  <%- if @tunnel_device then -%>
+  TunnelDevice <%= @tunnel_device %>
+  <%- end -%>
+  <%- if @update_host_keys then -%>
+  UpdateHostKeys <%= @update_host_keys %>
+  <%- end -%>
+  <%- if @use_privileged_port then -%>
+  UsePrivilegedPort <%= @use_privileged_port %>
+  <%- end -%>
+  <%- if @user then -%>
+  User <%= @user %>
+  <%- end -%>
+  <%- if @user_known_hosts_file then -%>
+  UserKnownHostsFile <%= @user_known_hosts_file %>
+  <%- end -%>
+  <%- if @verify_host_key_dns then -%>
+  VerifyHostKeyDNS <%= @verify_host_key_dns %>
+  <%- end -%>
+  <%- if @visual_host_key then -%>
+  VisualHostKey <%= @visual_host_key %>
+  <%- end -%>
+  <%- if @xauth_location then -%>
+  XAuthLocation <%= @xauth_location %>
+  <%- end -%>
+<%- end -%>
