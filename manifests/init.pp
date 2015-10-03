@@ -6,6 +6,7 @@ class accounts (
   $managed_users_defaults = undef,
   $managed_users_global_defaults = undef,
   $managed_usergroups = undef,
+  $manage_ssh_config = true,
   $sudoersd = '/etc/sudoers.d',
 ) {
   validate_bool($manage_groups)
