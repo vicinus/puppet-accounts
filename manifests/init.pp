@@ -7,7 +7,9 @@ class accounts (
   $managed_users_global_defaults = undef,
   $managed_usergroups = undef,
   $manage_ssh_config = true,
+  $virtual_users = false,
   $sudoersd = '/etc/sudoers.d',
+  $realize = undef,
 ) {
   validate_bool($manage_groups)
   validate_bool($manage_users)
@@ -58,5 +60,9 @@ class accounts (
         fail("accounts::managed_usergroups must either be an array or a hash, not: ${managed_usergroups}")
       }
     }
+  }
+
+  if $realize {
+    Accounts::User <| tag == $realize |>
   }
 }
