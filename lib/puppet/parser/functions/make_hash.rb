@@ -12,11 +12,15 @@ EOS
   res = {} 
   iarray.each_with_index do |item, index|
     if args.length == 3
-      keyvalue = item[args[2]]
+      if item.has_key?(ikeyparam)
+        keyvalue = item[ikeyparam]
+      else
+        keyvalue = index
+      end
     else
       keyvalue = index
     end
-    key = "#{ikeyprefix}#{keyvalue}"
+    key = "#{ikeyprefix}_#{keyvalue}"
     res[key] = item
   end
   return res
