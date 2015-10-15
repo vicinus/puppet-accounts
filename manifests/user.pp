@@ -116,23 +116,23 @@ define accounts::user(
       $real_ssh_keys_location = undef
       $ssh_keys_require = Accounts::Home_dir[$home]
     }
-    create_resources('ssh_authorized_key', make_hash($ssh_keys, "${name}_"), {
+    create_resources('ssh_authorized_key', make_hash($ssh_keys, $name, 'name'), {
       user => $name,
       require => $ssh_keys_require,
       target => $real_ssh_keys_location,
     })
     create_resources('exfile',
-      make_hash(concat($defaultfiles,$files), "${name}_", 'path'), {
+      make_hash(concat($defaultfiles,$files), $name, 'path'), {
         basedir => $home,
         owner => $uid,
         group => $gid,
       }
     )
-    create_resources('accounts::sudoers', make_hash($sudoers, "${name}_"),
+    create_resources('accounts::sudoers', make_hash($sudoers, $name),
         { user => $name, })
 
     create_resources('accounts::ssh_config',
-      make_hash($ssh_config, "${name}_"), {
+      make_hash($ssh_config, $name), {
         homedir => $home,
         username => $name,
         manage_ssh_config => $real_manage_ssh_config,
