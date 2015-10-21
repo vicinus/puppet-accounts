@@ -9,7 +9,7 @@ define accounts::usergroup (
   } else {
     $user_accounts_res = 'accounts::user'
   }
-  $group_res = 'group'
+  $group_res = 'accounts::group'
   $users_defaults = accounts_deepmerge($global_users_defaults,
       hiera_hash("accounts::usergroup::${name}::defaults", {}))
   if $users {

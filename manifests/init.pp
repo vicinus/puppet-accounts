@@ -8,6 +8,7 @@ class accounts (
   $managed_usergroups = undef,
   $manage_ssh_config = true,
   $virtual_users = false,
+  $manage_sudoersd = true,
   $sudoersd = '/etc/sudoers.d',
   $realize = undef,
 ) {
@@ -18,7 +19,7 @@ class accounts (
     if $managed_groups {
       $real_managed_groups = hiera_hash('accounts::managed_groups',
           $managed_groups)
-      create_resources('group', $real_managed_groups)
+      create_resources('accounts::group', $real_managed_groups)
     }
   }
 
@@ -59,6 +60,18 @@ class accounts (
       } else {
         fail("accounts::managed_usergroups must either be an array or a hash, not: ${managed_usergroups}")
       }
+    }
+  }
+
+  if $manage_sudoersd {
+    file { $sudoersd:
+      ensure => 'directory',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0750',
+      purge   => true,
+      recurse => true,
+      force   => true,
     }
   }
 
