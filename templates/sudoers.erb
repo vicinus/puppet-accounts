@@ -4,32 +4,35 @@
 <%- end -%>
 
 <%- if @user and @user.is_a? Array then -%>
-<%- users="#{@sane_name.upcase}_USERS" -%>
+<%- users="#{@name.upcase}_USERS" -%>
 User_Alias <%= users %> = <%= @user.join(", ") %>
 <%- else -%>
 <%- users=@user -%>
 <%- end -%>
+<%- if @group then -%>
+<%- users="%#{@group}" -%>
+<%- end -%>
 <%- if @hosts.is_a? Array then -%>
-<%- hosts="#{@sane_name.upcase}_HOSTS" -%>
+<%- hosts="#{@name.upcase}_HOSTS" -%>
 Host_Alias <%= hosts %> = <%= @hosts.join(", ") %>
 <%- else -%>
 <%- hosts=@hosts -%>
 <%- end -%>
 <%- if @runas.is_a? Array then -%>
-<%- runas="#{@sane_name.upcase}_RUNAS" -%>
+<%- runas="#{@name.upcase}_RUNAS" -%>
 Runas_Alias <%= runas %> = <%= @runas.join(", ") %>
 <%- else -%>
 <%- runas=@runas -%>
 <%- end -%>
 <%- if @cmnds.is_a? Array or not @defaults.empty? then -%>
-<%- cmnds="#{@sane_name.upcase}_CMNDS" -%>
-Cmnd_Alias <%= cmnds %> = <%= @cmnds.is_a? Array ? @cmnds.join(", ") : @cmnds %>
+<%- cmnds="#{@name.upcase}_CMNDS" -%>
+Cmnd_Alias <%= cmnds %> = <%= @cmnds.is_a?(Array) ? @cmnds.join(", ") : @cmnds %>
 <%- else -%>
 <%- cmnds=@cmnds -%>
 <%- end -%>
 <% if not @defaults.empty? then -%>
 
-Defaults!<%= cmnds %> <%= @defaults.is_a? Array ? @defaults.join(", ") : @defaults %>
+Defaults!<%= cmnds %> <%= @defaults.is_a?(Array) ? @defaults.join(", ") : @defaults %>
 <% end -%>
 
 <%= users %> <%= hosts %> = (<%= runas %>) <%= @tags.map{|x| x.sub(/$/, ':')}.join(' ') %> <%= cmnds %>
