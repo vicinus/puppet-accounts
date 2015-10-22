@@ -16,7 +16,7 @@ define accounts::sudoers (
   $sudoers_fragment = false,
 ) {
   include ::accounts::sudo
-  validate_re($name, '^[a-z_][a-z0-9_-]*$')
+  validate_re($name, '^[a-z_][a-zA-Z0-9_-]*$')
   validate_re($ensure, '^(present|absent)$')
   if $sudoersd {
     $sudoers_filename = "${sudoersd}/${name}"
