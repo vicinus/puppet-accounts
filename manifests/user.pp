@@ -1,4 +1,4 @@
-define accounts::user(
+define accounts::user (
   $ensure = 'present',
   $uid = undef,
   $gid = undef,
@@ -17,6 +17,7 @@ define accounts::user(
   $defaultfiles = [],
   $default_root_sudo = false,
   $sudoers = [],
+  $virtual_sudoers = false,
   $ssh_config = [],
   $manage_ssh_config = undef,
 ) {
@@ -76,7 +77,7 @@ define accounts::user(
     purge_ssh_keys => $real_purge_ssh_keys,
   }
 
-  if $gid =~ /^\d+$/ {
+  if $gid and $gid =~ /^\d+$/ {
     group { $name:
       ensure => $ensure,
       gid    => $gid,
@@ -84,7 +85,7 @@ define accounts::user(
   }
 
   if $ensure == 'present' {
-    if ($managedefaultgroup and $gid) or $gid =~ /^\d+$/ {
+    if $gid != undef and ($managedefaultgroup or $gid =~ /^\d+$/) {
       Group[$usergroupname] -> User[$name]
     }
     if $managehome {
@@ -128,8 +129,14 @@ define accounts::user(
         group => $gid,
       }
     )
-    create_resources('accounts::sudoers', make_hash($sudoers, $name),
-        { user => $name, })
+    if $virtual_sudoers {
+      create_resources('@accounts::sudoers', make_hash($sudoers, $name),
+          { user => $name, })
+      Accounts::Sudoers <| user == $name and tag == $virtual_sudoers |>
+    } else {
+      create_resources('accounts::sudoers', make_hash($sudoers, $name),
+          { user => $name, })
+    }
 
     create_resources('accounts::ssh_config',
       make_hash($ssh_config, $name), {
@@ -141,7 +148,7 @@ define accounts::user(
     )
   }
   if $ensure == 'absent' {
-    if ($managedefaultgroup and $gid) or $gid =~ /^\d+$/ {
+    if $gid != undef and ($managedefaultgroup or $gid =~ /^\d+$/) {
       User[$name] -> Group[$usergroupname]
     }
     if $managehome == true {
