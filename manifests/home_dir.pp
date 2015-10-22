@@ -1,4 +1,4 @@
-define accounts::home_dir(
+define accounts::home_dir (
   $user,
   $manage_ssh_config = undef,
   $group = undef,
