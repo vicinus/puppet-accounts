@@ -7,16 +7,21 @@ define accounts::sudoers (
   $ensure = 'present',
   $runas = 'root',
   $tags = [],
-  $defaults = [],
+  $host_defaults = [],
+  $user_defaults = [],
+  $cnmd_defaults = [],
+  $runas_defaults = [],
   $sudoersd = undef,
+  $order = undef,
+  $sudoers_fragment = false,
 ) {
-  include ::accounts
+  include ::accounts::sudo
   validate_re($name, '^[a-z_][a-z0-9_-]*$')
   validate_re($ensure, '^(present|absent)$')
   if $sudoersd {
     $sudoers_filename = "${sudoersd}/${name}"
   } else {
-    $sudoers_filename = "${accounts::sudoersd}/${name}"
+    $sudoers_filename = "${accounts::sudo::sudoersd}/${name}"
   }
   if $user == undef and $group == undef {
     fail('Either users or group must be set.')
@@ -27,10 +32,14 @@ define accounts::sudoers (
 
   if $group {
     validate_re($group, '^[a-z_][a-z0-9_-]*$')
+    $real_user = "%${group}"
   }
 
-  if $user and !is_array($user) {
-    validate_re($user, '^[a-z_][a-z0-9_-]*$')
+  if $user {
+    if !is_array($user) {
+      validate_re($user, '^[a-z_][a-z0-9_-]*$')
+    }
+    $real_user = $user
   }
 
   if $ensure == 'present' {
@@ -41,17 +50,27 @@ define accounts::sudoers (
       validate_cmd(template('accounts/sudoers.erb'), '/usr/sbin/visudo -c -f', 'visudo failed for sudoers')
     }
 
-    file { $sudoers_filename:
-      ensure       => file,
-      content      => template('accounts/sudoers.erb'),
-      owner        => 'root',
-      group        => 'root',
-      mode         => '0440',
-      validate_cmd => $validate_cmd,
+    if $sudoers_fragment {
+      concat::fragment { $name:
+        target => $sudoers_fragment,
+        content => template('accounts/sudoers.erb'),
+        order => $order,
+      }
+    } else {
+      file { $sudoers_filename:
+        ensure       => file,
+        content      => template('accounts/sudoers.erb'),
+        owner        => 'root',
+        group        => 'root',
+        mode         => '0440',
+        validate_cmd => $validate_cmd,
+      }
     }
   } else {
-    file { $sudoers_filename:
-      ensure => absent,
+    if ! $sudoers_fragment {
+      file { $sudoers_filename:
+        ensure => absent,
+      }
     }
   }
 }

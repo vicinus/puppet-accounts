@@ -1,0 +1,22 @@
+<%- @sudo_global_defaults.sort.each do |key, value| -%>
+  <%- if value.class == TrueClass -%>
+    <%- %>Defaults <%= key %>
+  <%- elsif value.class == FalseClass -%>
+    <%- %>Defaults !<%= key %>
+  <%- else -%>
+    <%- if value.is_a?(Hash) -%>
+      <%- value.sort.each do |v, op | -%>
+        <%- %><%= "Defaults #{key} #{op} \"#{v}\"" %>
+      <%- end -%>
+    <%- else -%>
+        <%- %>Defaults <%= key %> = "<%= value %>"
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
+
+<%- @sudo_global_includes.sort.each do |value| -%>
+  <%- %>#include <%= value %>
+<%- end -%>
+<%- @real_sudo_global_include_dirs.sort.each do |value| -%>
+  <%- %>#includedir <%= value %>
+<%- end -%>

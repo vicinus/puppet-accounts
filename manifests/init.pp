@@ -1,19 +1,22 @@
 class accounts (
+  $manage_sudo = true,
   $manage_groups   = true,
   $manage_users    = true,
+  $manage_ssh_config = true,
   $managed_groups = undef,
   $managed_users = undef,
   $managed_users_defaults = undef,
   $managed_users_global_defaults = undef,
   $managed_usergroups = undef,
-  $manage_ssh_config = true,
   $virtual_users = false,
-  $manage_sudoersd = true,
-  $sudoersd = '/etc/sudoers.d',
   $realize = undef,
 ) {
   validate_bool($manage_groups)
   validate_bool($manage_users)
+
+  if $manage_sudo {
+    include ::accounts::sudo
+  }
 
   if $manage_groups {
     if $managed_groups {
@@ -60,18 +63,6 @@ class accounts (
       } else {
         fail("accounts::managed_usergroups must either be an array or a hash, not: ${managed_usergroups}")
       }
-    }
-  }
-
-  if $manage_sudoersd {
-    file { $sudoersd:
-      ensure => 'directory',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0750',
-      purge   => true,
-      recurse => true,
-      force   => true,
     }
   }
 

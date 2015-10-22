@@ -1,38 +1,55 @@
+<%- if @sudoers_fragment.class == FalseClass then -%>
 # Managed by Puppet. Local changes will be lost.
+<%- end -%>
 <%- if @comment then -%>
 # <%= @comment %>
 <%- end -%>
 
-<%- if @user and @user.is_a? Array then -%>
-<%- users="#{@name.upcase}_USERS" -%>
-User_Alias <%= users %> = <%= @user.join(", ") %>
-<%- else -%>
-<%- users=@user -%>
+<%- if @real_user -%>
+  <%- if @real_user.is_a? Array then -%>
+    <%- users="#{@name.upcase}_USERS" -%>
+    <%- %>User_Alias <%= users %> = <%= @real_user.join(", ") %>
+  <%- else -%>
+    <%- users=@real_user -%>
+  <%- end -%>
+  <%- if not @user_defaults.empty? then -%>
+    <%- %>Defaults:<%= users %> <%= @user_defaults.is_a?(Array) ? @user_defaults.join(", ") : @user_defaults %>
+  <%- end -%>
 <%- end -%>
-<%- if @group then -%>
-<%- users="%#{@group}" -%>
+<%- if @hosts then -%>
+  <%- if @hosts.is_a? Array or not @host_defaults.empty? then -%>
+    <%- hosts="#{@name.upcase}_HOSTS" -%>
+    <%- %>Host_Alias <%= hosts %> = <%= @hosts.join(", ") %>
+  <%- else -%>
+    <%- hosts=@hosts -%>
+  <%- end -%>
+  <%- if not @host_defaults.empty? then -%>
+    <%- %>Defaults@<%= hosts %> <%= @host_defaults.is_a?(Array) ? @host_defaults.join(", ") : @host_defaults %>
+  <%- end -%>
 <%- end -%>
-<%- if @hosts.is_a? Array then -%>
-<%- hosts="#{@name.upcase}_HOSTS" -%>
-Host_Alias <%= hosts %> = <%= @hosts.join(", ") %>
-<%- else -%>
-<%- hosts=@hosts -%>
+<%- if @runas then -%>
+  <%- if @runas.is_a? Array or not @runas_defaults.empty? then -%>
+    <%- runas="#{@name.upcase}_RUNAS" -%>
+    <%- %>Runas_Alias <%= runas %> = <%= @runas.join(", ") %>
+  <%- else -%>
+    <%- runas=@runas -%>
+  <%- end -%>
+  <%- if not @runas_defaults.empty? then -%>
+    <%- %>Defaults><%= runas %> <%= @runas_defaults.is_a?(Array) ? @runas_defaults.join(", ") : @runas_defaults %>
+  <%- end -%>
 <%- end -%>
-<%- if @runas.is_a? Array then -%>
-<%- runas="#{@name.upcase}_RUNAS" -%>
-Runas_Alias <%= runas %> = <%= @runas.join(", ") %>
-<%- else -%>
-<%- runas=@runas -%>
+<%- if @cmnds then -%>
+  <%- if @cmnds.is_a? Array or not @cnmd_defaults.empty? then -%>
+    <%- cmnds="#{@name.upcase}_CMNDS" -%>
+    <%- %>Cmnd_Alias <%= cmnds %> = <%= @cmnds.is_a?(Array) ? @cmnds.join(", ") : @cmnds %>
+  <%- else -%>
+    <%- cmnds=@cmnds -%>
+  <%- end -%>
+  <%- if not @cnmd_defaults.empty? then -%>
+    <%- %>Defaults!<%= cmnds %> <%= @cnmd_defaults.is_a?(Array) ? @cnmd_defaults.join(", ") : @cnmd_defaults %>
+  <%- end -%>
 <%- end -%>
-<%- if @cmnds.is_a? Array or not @defaults.empty? then -%>
-<%- cmnds="#{@name.upcase}_CMNDS" -%>
-Cmnd_Alias <%= cmnds %> = <%= @cmnds.is_a?(Array) ? @cmnds.join(", ") : @cmnds %>
-<%- else -%>
-<%- cmnds=@cmnds -%>
-<%- end -%>
-<% if not @defaults.empty? then -%>
 
-Defaults!<%= cmnds %> <%= @defaults.is_a?(Array) ? @defaults.join(", ") : @defaults %>
-<% end -%>
-
-<%= users %> <%= hosts %> = (<%= runas %>) <%= @tags.map{|x| x.sub(/$/, ':')}.join(' ') %> <%= cmnds %>
+<%- if users and hosts and runas and cmnds then -%>
+  <%- %><%= users %> <%= hosts %> = (<%= runas %>) <%= @tags.map{|x| x.sub(/$/, ':')}.join(' ') %> <%= cmnds %>
+<%- end -%>
