@@ -1,6 +1,5 @@
 define accounts::sudoers (
-  $user = undef,
-  $group = undef,
+  $users = undef,
   $hosts = 'ALL',
   $cmnds = 'ALL',
   $comment = undef,
@@ -23,23 +22,8 @@ define accounts::sudoers (
   } else {
     $sudoers_filename = "${accounts::sudo::sudoersd}/${name}"
   }
-  if $user == undef and $group == undef {
-    fail('Either users or group must be set.')
-  }
-  if $user != undef and $group != undef {
-    fail('Only users or group can be set, not both.')
-  }
-
-  if $group {
-    validate_re($group, '^[a-z_][a-z0-9_-]*$')
-    $real_user = "%${group}"
-  }
-
-  if $user {
-    if !is_array($user) {
-      validate_re($user, '^[a-z_][a-z0-9_-]*$')
-    }
-    $real_user = $user
+  if $users == undef {
+    fail('users must be set.')
   }
 
   if $ensure == 'present' {

@@ -99,7 +99,7 @@ define accounts::user (
     if ($default_root_sudo) {
       accounts::sudoers { "${name}_root":
         ensure => 'present',
-        user => $name,
+        users => $name,
         tags => [ 'NOPASSWD' ],
       }
     }
@@ -131,11 +131,11 @@ define accounts::user (
     )
     if $virtual_sudoers {
       create_resources('@accounts::sudoers', make_hash($sudoers, $name),
-          { user => $name, })
+          { users => $name, })
       Accounts::Sudoers <| user == $name and tag == $virtual_sudoers |>
     } else {
       create_resources('accounts::sudoers', make_hash($sudoers, $name),
-          { user => $name, })
+          { users => $name, })
     }
 
     create_resources('accounts::ssh_config',

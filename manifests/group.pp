@@ -15,6 +15,6 @@ define accounts::group (
 
   create_resources('accounts::sudoers', make_hash($sudoers, $title), {
     ensure => $ensure,
-    group => $title,
+    users => "%${title}",
   })
 }
