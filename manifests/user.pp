@@ -136,7 +136,7 @@ define accounts::user (
     if $virtual_sudoers {
       create_resources('@accounts::sudoers', make_hash($sudoers, $name),
           { users => $name, })
-      Accounts::Sudoers <| user == $name and tag == $virtual_sudoers |>
+      Accounts::Sudoers <| users == $name and tag == $virtual_sudoers |>
     } else {
       create_resources('accounts::sudoers', make_hash($sudoers, $name),
           { users => $name, })
