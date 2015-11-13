@@ -17,7 +17,7 @@ define accounts::user (
   $defaultfiles = [],
   $default_root_sudo = false,
   $sudoers = [],
-  $virtual_sudoers = false,
+  $virtual_sudoers = [],
   $ssh_config = [],
   $manage_ssh_config = undef,
 ) {
@@ -133,11 +133,11 @@ define accounts::user (
         group => $gid,
       }
     )
-    if $virtual_sudoers {
-      create_resources('@accounts::sudoers', make_hash($sudoers, $name),
+    if !empty($virtual_sudoers) {
+      create_resources('@accounts::sudoers', make_hash($virtual_sudoers, $name),
           { users => $name, })
-      Accounts::Sudoers <| users == $name and tag == $virtual_sudoers |>
-    } else {
+    }
+    if !empty($sudoers) {
       create_resources('accounts::sudoers', make_hash($sudoers, $name),
           { users => $name, })
     }

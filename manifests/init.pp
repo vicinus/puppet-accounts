@@ -9,7 +9,8 @@ class accounts (
   $managed_users_global_defaults = undef,
   $managed_usergroups = undef,
   $virtual_users = false,
-  $realize = undef,
+  $realize_users = undef,
+  $realize_sudoers = undef,
 ) {
   validate_bool($manage_groups)
   validate_bool($manage_users)
@@ -49,24 +50,24 @@ class accounts (
     }
     if $managed_usergroups {
       if is_array($managed_usergroups) {
-        $real_managed_usergroups = hiera_array('accounts::managed_usergroups',
-            $managed_usergroups)
-        accounts::usergroup { $real_managed_usergroups:
-          global_users_defaults => $managed_users_global_defaults,
-        }
+        $real_managed_usergroups = make_hashx(
+            hiera_array('accounts::managed_usergroups', $managed_usergroups))
       } elsif is_hash($managed_usergroups) {
         $real_managed_usergroups = hiera_hash('accounts::managed_usergroups',
             $managed_usergroups)
-        create_resources('accounts::usergroup', $real_managed_usergroups, {
-          global_users_defaults => $managed_users_global_defaults,
-        })
       } else {
         fail("accounts::managed_usergroups must either be an array or a hash, not: ${managed_usergroups}")
       }
+      create_resources('accounts::usergroup', $real_managed_usergroups, {
+        global_users_defaults => $managed_users_global_defaults,
+      })
     }
   }
 
-  if $realize {
-    Accounts::User <| tag == $realize |>
+  if $realize_users {
+    accounts::realize_users { $realize_users: }
+  }
+  if $realize_sudoers {
+    accounts::realize_sudoers { $realize_sudoers: }
   }
 }

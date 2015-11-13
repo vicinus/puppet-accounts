@@ -2,9 +2,17 @@ define accounts::usergroup (
   $users = undef,
   $global_users_defaults = {},
   $groups = undef,
+  $virtual_users = undef,
+  $realize_users = undef,
+  $realize_sudoers = undef,
 ) {
-  include ::accounts
-  if $accounts::virtual_users {
+  if $virtual_users == undef {
+    include ::accounts
+    $real_virtual_users = $accounts::virtual_users
+  } else {
+    $real_virtual_users = $virtual_users
+  }
+  if $real_virtual_users {
     $user_accounts_res = '@accounts::user'
   } else {
     $user_accounts_res = 'accounts::user'
@@ -23,5 +31,11 @@ define accounts::usergroup (
   } else {
     create_resources($group_res,
         hiera_hash("accounts::usergroup::${name}::groups", {}))
+  }
+  if $realize_users {
+    accounts::realize_users { $realize_users: }
+  }
+  if $realize_sudoers {
+    accounts::realize_sudoers { $realize_sudoers: }
   }
 }
