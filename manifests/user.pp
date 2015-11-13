@@ -13,6 +13,9 @@ define accounts::user (
   $ssh_keys = [],
   $ssh_keys_location = undef,
   $purge_ssh_keys = true,
+  $purge_home_directory = false,
+  $purge_ssh_directory = false,
+  $ssh_known_hosts = {},
   $files = [],
   $defaultfiles = [],
   $default_root_sudo = false,
@@ -93,6 +96,10 @@ define accounts::user (
         user    => $name,
         group   => $usergroupname,
         manage_ssh_config => $real_manage_ssh_config,
+        purge_home_directory => $purge_home_directory,
+        purge_ssh_directory => $purge_ssh_directory,
+        ssh_known_hosts => $ssh_known_hosts,
+        create_authorized_keys => $ssh_keys_location == undef,
         require => [ User[$name], ],
       }
     }
