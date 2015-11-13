@@ -134,7 +134,7 @@ define accounts::user (
       }
     )
     if !empty($virtual_sudoers) {
-      create_resources('@accounts::sudoers', make_hash($virtual_sudoers, $name),
+      create_resources('@accounts::sudoers', make_hash($virtual_sudoers, "virtual_${name}"),
           { users => $name, })
     }
     if !empty($sudoers) {
