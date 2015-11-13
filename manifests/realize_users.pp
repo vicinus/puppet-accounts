@@ -1,4 +1,3 @@
-define accounts::realize_users (
-) {
+define accounts::realize_users {
   Accounts::User <| tag == $name |>
 }

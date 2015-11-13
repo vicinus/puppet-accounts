@@ -11,6 +11,7 @@ class accounts (
   $virtual_users = false,
   $realize_users = undef,
   $realize_sudoers = undef,
+  $sudo_tag_splitter = ' - ',
 ) {
   validate_bool($manage_groups)
   validate_bool($manage_users)
@@ -68,6 +69,11 @@ class accounts (
     accounts::realize_users { $realize_users: }
   }
   if $realize_sudoers {
-    accounts::realize_sudoers { $realize_sudoers: }
+    if is_hash($realize_sudoers) {
+      $real_realize_sudoers = join_keys_to_values($realize_sudoers, $::account::sudo_tag_splitter)
+    } else {
+      $real_realize_sudoers = $realize_sudoers
+    }
+    accounts::realize_sudoers { $real_realize_sudoers: }
   }
 }

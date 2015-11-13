@@ -36,6 +36,12 @@ define accounts::usergroup (
     accounts::realize_users { $realize_users: }
   }
   if $realize_sudoers {
-    accounts::realize_sudoers { $realize_sudoers: }
+    if is_hash($realize_sudoers) {
+      include ::accounts
+      $real_realize_sudoers = join_keys_to_values($realize_sudoers, $::accounts::sudo_tag_splitter)
+    } else {
+      $real_realize_sudoers = $realize_sudoers
+    }
+    accounts::realize_sudoers { $real_realize_sudoers: }
   }
 }
