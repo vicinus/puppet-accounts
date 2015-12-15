@@ -2,19 +2,22 @@ define accounts::home_dir (
   $user,
   $ssh_known_hosts = {},
   $manage_ssh_config = undef,
+  $manage_home_dir = true,
   $purge_home_directory = false,
   $purge_ssh_directory = false,
+  $default_mode = '0600',
   $group = undef,
   $create_authorized_keys = true,
 ) {
-  File { owner => $user, group => $group, mode => '0644', }
+  File { owner => $user, group => $group, mode => $default_mode, }
 
-  file { $name:
-    ensure => directory,
-    mode   => '0700',
-    purge => $purge_home_directory,
-    force => $purge_home_directory,
-    recurse => $purge_home_directory,
+  if $manage_home_dir {
+    file { $name:
+      ensure => directory,
+      purge => $purge_home_directory,
+      force => $purge_home_directory,
+      recurse => $purge_home_directory,
+    }
   }
 
   file { "${name}/.ssh":
