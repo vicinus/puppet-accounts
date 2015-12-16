@@ -51,6 +51,7 @@ define accounts::home_dir (
       force          => true,
       owner          => $user,
       group          => $group,
+      require        => File["${name}/.ssh"],
     }
 
     concat::fragment { "${user}_header_ssh_config":
