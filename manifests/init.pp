@@ -65,9 +65,8 @@ class accounts (
     }
   }
 
-  if $realize_users {
-    accounts::realize_users { $realize_users: }
-  }
+  # order of realizing virtual resources first in, last out.
+  # so order is important!!!
   if $realize_sudoers {
     if is_hash($realize_sudoers) {
       $real_realize_sudoers = join_keys_to_values($realize_sudoers, $::account::sudo_tag_splitter)
@@ -75,5 +74,8 @@ class accounts (
       $real_realize_sudoers = $realize_sudoers
     }
     accounts::realize_sudoers { $real_realize_sudoers: }
+  }
+  if $realize_users {
+    accounts::realize_users { $realize_users: }
   }
 }
