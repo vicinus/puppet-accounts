@@ -142,6 +142,7 @@ define accounts::user (
         basedir => $home,
         owner => $uid,
         group => $gid,
+        additional_parameters => { 'name' => $title },
       }
     )
     if !empty($virtual_sudoers) {
