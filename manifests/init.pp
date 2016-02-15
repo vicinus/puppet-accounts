@@ -34,6 +34,8 @@ class accounts (
       $real_managed_users_global_defaults = hiera_hash(
           'accounts::managed_users_global_defaults',
           $managed_users_global_defaults)
+    } else {
+      $real_managed_users_global_defaults = {}
     }
     if $managed_users {
       $real_managed_users = hiera_hash('accounts::managed_users',
@@ -63,7 +65,7 @@ class accounts (
         fail("accounts::managed_usergroups must either be an array or a hash, not: ${managed_usergroups}")
       }
       create_resources('accounts::usergroup', $real_managed_usergroups, {
-        global_users_defaults => $managed_users_global_defaults,
+        global_users_defaults => $real_managed_users_global_defaults,
       })
     }
   }
