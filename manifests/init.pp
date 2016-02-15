@@ -1,3 +1,4 @@
+# Class: accounts:  See README.md for documentation.
 class accounts (
   $manage_sudo = true,
   $manage_groups   = true,
@@ -51,8 +52,10 @@ class accounts (
     }
     if $managed_usergroups {
       if is_array($managed_usergroups) {
-        $real_managed_usergroups = make_hashx(
-            hiera_array('accounts::managed_usergroups', $managed_usergroups))
+        $real_managed_usergroups = make_hash(
+            hiera_array('accounts::managed_usergroups', $managed_usergroups), {
+              'hiera_key' => 'accounts::usergroup::%k::config',
+            })
       } elsif is_hash($managed_usergroups) {
         $real_managed_usergroups = hiera_hash('accounts::managed_usergroups',
             $managed_usergroups)

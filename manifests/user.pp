@@ -1,3 +1,4 @@
+# See README.md for details.
 define accounts::user (
   $ensure = 'present',
   $uid = undef,
@@ -95,32 +96,32 @@ define accounts::user (
     }
     if $managehome {
       accounts::home_dir { $home:
-        user    => $name,
-        group   => $usergroupname,
-        manage_ssh_config => $real_manage_ssh_config,
-        manage_home_dir => $manage_home_dir,
-        default_mode => $home_default_mode,
-        purge_home_directory => $purge_home_directory,
-        purge_ssh_directory => $purge_ssh_directory,
-        ssh_known_hosts => $ssh_known_hosts,
+        user                   => $name,
+        group                  => $usergroupname,
+        manage_ssh_config      => $real_manage_ssh_config,
+        manage_home_dir        => $manage_home_dir,
+        default_mode           => $home_default_mode,
+        purge_home_directory   => $purge_home_directory,
+        purge_ssh_directory    => $purge_ssh_directory,
+        ssh_known_hosts        => $ssh_known_hosts,
         create_authorized_keys => $ssh_keys_location == undef,
-        require => [ User[$name], ],
+        require                => [ User[$name], ],
       }
     }
     if ($default_root_sudo) {
       accounts::sudoers { "${name}_root":
         ensure => 'present',
-        users => $name,
-        tags => [ 'NOPASSWD' ],
+        users  => $name,
+        tags   => [ 'NOPASSWD' ],
       }
     }
     if $ssh_keys_location {
       $real_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
       file { $real_ssh_keys_location:
-        ensure => file,
-        owner => $name,
-        group => $usergroupname,
-        mode => '0600',
+        ensure  => file,
+        owner   => $name,
+        group   => $usergroupname,
+        mode    => '0600',
         replace => false,
       }
       $ssh_keys_require = File[$real_ssh_keys_location]
@@ -132,13 +133,20 @@ define accounts::user (
         $ssh_keys_require = undef
       }
     }
-    create_resources('ssh_authorized_key', make_hash($ssh_keys, $name, 'name'), {
+    create_resources('ssh_authorized_key',
+      make_hash($ssh_keys, {
+        'keyprefix' => $name,
+        'keyname' => 'name',
+      }), {
       user => $name,
       require => $ssh_keys_require,
       target => $real_ssh_keys_location,
     })
     create_resources('exfile',
-      make_hash(concat($defaultfiles,$files), $name, 'path'), {
+      make_hash(concat($defaultfiles,$files), {
+        'keyprefix' => $name,
+        'keyname' => 'path',
+      }), {
         basedir => $home,
         owner => $uid,
         group => $gid,

@@ -1,3 +1,4 @@
+# See README.md for details.
 define accounts::sudoers (
   $users = undef,
   $hosts = 'ALL',
@@ -36,9 +37,9 @@ define accounts::sudoers (
 
     if $sudoers_fragment {
       concat::fragment { $name:
-        target => $sudoers_fragment,
+        target  => $sudoers_fragment,
         content => template('accounts/sudoers.erb'),
-        order => $order,
+        order   => $order,
       }
     } else {
       file { $sudoers_filename:

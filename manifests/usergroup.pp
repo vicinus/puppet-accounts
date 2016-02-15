@@ -1,3 +1,4 @@
+# See README.md for details.
 define accounts::usergroup (
   $users = undef,
   $global_users_defaults = {},

@@ -1,3 +1,4 @@
+# See README.md for details.
 define accounts::realize_sudoers {
   include ::accounts
   if $::accounts::sudo_tag_splitter in $name {

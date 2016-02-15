@@ -1,3 +1,4 @@
+# See README.md for details.
 define accounts::home_dir (
   $user,
   $ssh_known_hosts = {},
@@ -13,27 +14,27 @@ define accounts::home_dir (
 
   if $manage_home_dir {
     file { $name:
-      ensure => directory,
-      purge => $purge_home_directory,
-      force => $purge_home_directory,
+      ensure  => directory,
+      purge   => $purge_home_directory,
+      force   => $purge_home_directory,
       recurse => $purge_home_directory,
     }
   }
 
   file { "${name}/.ssh":
-    ensure => directory,
-    mode   => '0700',
-    purge => $purge_ssh_directory,
-    force => $purge_ssh_directory,
+    ensure  => directory,
+    mode    => '0700',
+    purge   => $purge_ssh_directory,
+    force   => $purge_ssh_directory,
     recurse => $purge_ssh_directory,
   }
 
   if is_hash($ssh_known_hosts) and $ssh_known_hosts['manage'] {
     file { "${name}/.ssh/known_hosts":
-      ensure => file,
+      ensure  => file,
       replace => $ssh_known_hosts['replace'],
       content => $ssh_known_hosts['content'],
-      source => $ssh_known_hosts['source'],
+      source  => $ssh_known_hosts['source'],
     }
   }
 

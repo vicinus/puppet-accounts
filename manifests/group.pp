@@ -1,3 +1,4 @@
+# See README.md for details.
 define accounts::group (
   $ensure = 'present',
   $gid = undef,
@@ -9,12 +10,12 @@ define accounts::group (
 
   group { $title:
     ensure => $ensure,
-    gid => $gid,
+    gid    => $gid,
     system => $system,
   }
 
   create_resources('accounts::sudoers', make_hash($sudoers, $title), {
     ensure => $ensure,
-    users => "%${title}",
+    users  => "%${title}",
   })
 }

@@ -1,3 +1,4 @@
+# See README.md for details.
 define accounts::ssh_config (
   $username,
   $host = undef,

@@ -1,3 +1,4 @@
+# Class: accounts::sudo:  See README.md for documentation.
 class accounts::sudo (
   $keep_os_defaults = true,
   $manage_sudo_package = true,
@@ -53,17 +54,17 @@ class accounts::sudo (
         ensure         => present,
         ensure_newline => true,
         force          => true,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0440',
+        owner          => 'root',
+        group          => 'root',
+        mode           => '0440',
       }
       concat::fragment { "${sudoers_filename}_header":
-        target => $sudoers_filename,
+        target  => $sudoers_filename,
         content => template('accounts/sudo.erb'),
-        order => '001',
+        order   => '001',
       }
       create_resources('accounts::sudoers',
-        make_hash($sudo_global_config, "accounts_sudo"), { 
+        make_hash($sudo_global_config, 'accounts_sudo'), {
           sudoers_fragment => $sudoers_filename,
           order => '010',
         }
