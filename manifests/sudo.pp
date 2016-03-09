@@ -11,6 +11,7 @@ class accounts::sudo (
   $sudo_global_config = [],
   $sudoersd = '/etc/sudoers.d',
   $manage_sudoersd = true,
+  $sudoers = {},
 ) {
 
   if $manage_sudo_package {
@@ -70,5 +71,9 @@ class accounts::sudo (
         }
       )
     }
+  }
+  if !empty($sudoers) {
+    $_sudoers = hiera_hash('accounts::sudo::sudoers', $sudoers)
+    create_resources('accounts::sudoers', $_sudoers)
   }
 }
