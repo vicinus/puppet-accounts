@@ -7,6 +7,7 @@ define accounts::sudoers (
   $ensure = 'present',
   $runas = 'root',
   $tags = [],
+  $defaults = [],
   $host_defaults = [],
   $user_defaults = [],
   $cnmd_defaults = [],
@@ -22,9 +23,6 @@ define accounts::sudoers (
     $sudoers_filename = "${sudoersd}/${name}"
   } else {
     $sudoers_filename = "${accounts::sudo::sudoersd}/${name}"
-  }
-  if $users == undef {
-    fail('users must be set.')
   }
 
   if $ensure == 'present' {

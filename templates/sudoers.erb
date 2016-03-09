@@ -5,6 +5,9 @@
 # <%= @comment %>
 <%- end -%>
 
+<%- if not @defaults.empty? -%>
+  <%- %>Defaults <%= @defaults.is_a?(Array) ? @defaults.join(", ") : @defaults %>
+<%- end -%>
 <%- if @users -%>
   <%- if @users.is_a? Array then -%>
     <%- users="#{@name.upcase}_USERS" -%>
