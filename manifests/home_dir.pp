@@ -49,7 +49,6 @@ define accounts::home_dir (
     concat { "${name}/.ssh/config":
       ensure         => present,
       ensure_newline => true,
-      force          => true,
       owner          => $user,
       group          => $group,
       require        => File["${name}/.ssh"],
