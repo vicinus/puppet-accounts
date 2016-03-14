@@ -53,7 +53,6 @@ class accounts::sudo (
       concat { $sudoers_filename:
         ensure         => present,
         ensure_newline => true,
-        force          => true,
         owner          => 'root',
         group          => 'root',
         mode           => '0440',
