@@ -28,10 +28,10 @@ define accounts::user (
   $manage_ssh_config = undef,
 ) {
   include ::accounts
-  if $manage_ssh_config {
-    $real_manage_ssh_config = $manage_ssh_config
-  } else {
+  if $manage_ssh_config == undef {
     $real_manage_ssh_config = $::accounts::manage_ssh_config
+  } else {
+    $real_manage_ssh_config = $manage_ssh_config
   }
   validate_re($ensure, '^(present|absent)$')
   if $uid != undef {
