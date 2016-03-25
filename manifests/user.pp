@@ -21,6 +21,7 @@ define accounts::user (
   $ssh_known_hosts = {},
   $files = [],
   $defaultfiles = [],
+  $merge_file_hashes = false,
   $default_root_sudo = false,
   $sudoers = [],
   $virtual_sudoers = [],
@@ -142,11 +143,16 @@ define accounts::user (
       require => $ssh_keys_require,
       target => $real_ssh_keys_location,
     })
+    if $merge_file_hashes {
+      $merge_items = { 'merge_items' => true, }
+    } else {
+      $merge_items = { }
+    }
     create_resources('exfile',
-      make_hash(concat($defaultfiles,$files), {
+      make_hash(concat($defaultfiles,$files), merge({
         'keyprefix' => $name,
         'keyname' => 'path',
-      }), {
+      }, $merge_items)), {
         basedir => $home,
         owner => $uid,
         group => $gid,
