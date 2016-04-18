@@ -2,12 +2,13 @@
 define accounts::ssh_config (
   $username,
   $host = undef,
+  $hostname = undef,
   $homedir = undef,
   $ensure = 'present',
   $order = '10',
   $key = undef,
   $group = undef,
-  $manage_ssh_config = undef,
+  $manage_ssh_config = true,
 
   $address_family = undef,
   $batch_mode = undef,
@@ -100,7 +101,11 @@ define accounts::ssh_config (
   if $homedir {
     $real_homedir = $homedir
   } else {
-    $real_homedir = "/home/${username}"
+    if $username == 'root' {
+      $real_homedir = '/root'
+    } else {
+      $real_homedir = "/home/${username}"
+    }
   }
   if $identity_file {
     if $identity_file[0] == '/' {

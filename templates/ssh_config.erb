@@ -1,5 +1,8 @@
 <%- if @host then -%>
 Host <%= @host %>
+  <%- if @hostname then -%>
+  Hostname <%= @hostname %>
+  <%- end -%>
   <%- if @address_family then -%>
   AddressFamily <%= @address_family %>
   <%- end -%>
