@@ -27,6 +27,7 @@ define accounts::user (
   $virtual_sudoers = [],
   $ssh_config = [],
   $manage_ssh_config = undef,
+  $membership = 'inclusive',
 ) {
   include ::accounts
   if $manage_ssh_config == undef {
@@ -81,6 +82,7 @@ define accounts::user (
     groups         => $groups,
     password       => $password,
     managehome     => $managehome,
+    membership     => $membership,
     purge_ssh_keys => $real_purge_ssh_keys,
   }
 
