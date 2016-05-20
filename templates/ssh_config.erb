@@ -264,4 +264,7 @@ Host <%= @host %>
   <%- if @xauth_location then -%>
   XAuthLocation <%= @xauth_location %>
   <%- end -%>
+  <%- if @pubkey_accepted_key_types then -%>
+  PubkeyAcceptedKeyTypes <%= @pubkey_accepted_key_types %>
+  <%- end -%>
 <%- end -%>

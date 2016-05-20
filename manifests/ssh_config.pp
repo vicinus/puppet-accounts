@@ -97,6 +97,7 @@ define accounts::ssh_config (
   $verify_host_key_dns = undef,
   $visual_host_key = undef,
   $xauth_location = undef,
+  $pubkey_accepted_key_types = undef,
 ) {
   if $homedir {
     $real_homedir = $homedir
