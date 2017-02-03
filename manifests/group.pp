@@ -6,7 +6,9 @@ define accounts::group (
   $sudoers = [],
 ) {
   validate_re($ensure, '^(present|absent)$')
-  validate_integer($gid)
+  if $gid != undef {
+    validate_integer($gid)
+  }
 
   group { $title:
     ensure => $ensure,
