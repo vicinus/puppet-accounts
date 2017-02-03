@@ -37,7 +37,11 @@ define accounts::user (
   }
   validate_re($ensure, '^(present|absent)$')
   if $uid != undef {
-    validate_re($uid, '^\d+$')
+    if is_string($uid) {
+      validate_re($uid, '^\d+$')
+    } else {
+      validate_integer($uid)
+    }
   }
   validate_re($shell, '^/')
   validate_string($comment)
