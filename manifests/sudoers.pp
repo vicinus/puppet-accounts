@@ -1,5 +1,6 @@
 # See README.md for details.
 define accounts::sudoers (
+  $filename = $title,
   $users = undef,
   $hosts = 'ALL',
   $cmnds = 'ALL',
@@ -17,12 +18,12 @@ define accounts::sudoers (
   $sudoers_fragment = false,
 ) {
   include ::accounts::sudo
-  validate_re($name, '^[a-z_][a-zA-Z0-9_-]*$')
+  validate_re($filename, '^[a-z_][a-zA-Z0-9_-]*$')
   validate_re($ensure, '^(present|absent)$')
   if $sudoersd {
-    $sudoers_filename = "${sudoersd}/${name}"
+    $sudoers_filename = "${sudoersd}/${filename}"
   } else {
-    $sudoers_filename = "${accounts::sudo::sudoersd}/${name}"
+    $sudoers_filename = "${accounts::sudo::sudoersd}/${filename}"
   }
 
   if $ensure == 'present' {
