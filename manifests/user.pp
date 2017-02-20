@@ -50,11 +50,16 @@ define accounts::user (
   if $password != undef {
     validate_string($password)
   }
-  if $gid {
-    if $gid =~ /^\d+$/ {
-      $usergroupname = $name
-    } else {
-      $usergroupname = $gid
+  if $gid != undef {
+    case $gid {
+      /^\d+$/, Integer[0]: {
+        $usergroupname = $name
+        $gid_is_number = true
+      }
+      default: {
+        $usergroupname = $gid
+        $gid_is_number = false
+      }
     }
   }
 
@@ -90,7 +95,7 @@ define accounts::user (
     purge_ssh_keys => $real_purge_ssh_keys,
   }
 
-  if $gid and $gid =~ /^\d+$/ {
+  if $gid and $gid_is_number {
     group { $name:
       ensure => $ensure,
       gid    => $gid,
@@ -98,7 +103,7 @@ define accounts::user (
   }
 
   if $ensure == 'present' {
-    if $gid != undef and ($managedefaultgroup or $gid =~ /^\d+$/) {
+    if $gid != undef and ($managedefaultgroup or $gid_is_number) {
       Group[$usergroupname] -> User[$name]
     }
     if $managehome {
@@ -184,7 +189,7 @@ define accounts::user (
     )
   }
   if $ensure == 'absent' {
-    if $gid != undef and ($managedefaultgroup or $gid =~ /^\d+$/) {
+    if $gid != undef and ($managedefaultgroup or $gid_is_number) {
       User[$name] -> Group[$usergroupname]
     }
     if $managehome == true {
