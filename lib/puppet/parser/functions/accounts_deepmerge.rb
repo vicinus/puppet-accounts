@@ -36,17 +36,23 @@ module Puppet::Parser::Functions
   end
 end
 
-def overlay( hash1, hash2 )
-    hash2.each do |key, value|
-        if( value.is_a?(Hash) )
-            if( ! hash1.has_key?( key ) or ! hash1[key].is_a?(Hash))
-                hash1[key] = value
-            else
-                overlay( hash1[key], value )
-            end
-        else
-            hash1[key] = value
-        end
+def overlay(hash1, hash2)
+  hash2.each do |key, value|
+    if (value.is_a?(Hash))
+      if (!hash1.has_key?(key) or !hash1[key].is_a?(Hash))
+        hash1[key] = value
+      else
+        overlay(hash1[key], value)
+      end
+    elsif (value.is_a?(Array))
+      if (!hash1.has_key?(key) or !hash1[key].is_a?(Array))
+        hash1[key] = value
+      else
+        hash1[key] = hash1[key] + value
+      end
+    else
+      hash1[key] = value
     end
+  end
 end
 
