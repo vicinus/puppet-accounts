@@ -20,7 +20,15 @@ define accounts::usergroup (
   }
   $group_res = 'accounts::group'
   $users_defaults = accounts_deepmerge($global_users_defaults,
-      hiera_hash("accounts::usergroup::${name}::defaults", {}))
+      lookup({
+        'name' => "accounts::usergroup::${name}::defaults",
+        'value_type' => Hash,
+        'merge' => {
+          'strategy'        => 'deep',
+          'knockout_prefix' => '-_-',
+        },
+        'default_value' => {},
+      }))
   if $users {
     create_resources($user_accounts_res, $users, $users_defaults)
   } else {
