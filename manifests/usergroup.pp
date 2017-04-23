@@ -32,14 +32,28 @@ define accounts::usergroup (
   if $users {
     create_resources($user_accounts_res, $users, $users_defaults)
   } else {
-    create_resources($user_accounts_res,
-        hiera_hash("accounts::usergroup::${name}", {}), $users_defaults)
+    create_resources($user_accounts_res, lookup({
+        'name' => "accounts::usergroup::${name}",
+        'value_type' => Hash,
+        'merge' => {
+          'strategy'        => 'deep',
+          'knockout_prefix' => '-_-',
+        },
+        'default_value' => {},
+      }), $users_defaults)
   }
   if $groups {
     create_resources($group_res, $groups)
   } else {
-    create_resources($group_res,
-        hiera_hash("accounts::usergroup::${name}::groups", {}))
+    create_resources($group_res, lookup({
+        'name' => "accounts::usergroup::${name}::groups",
+        'value_type' => Hash,
+        'merge' => {
+          'strategy'        => 'deep',
+          'knockout_prefix' => '-_-',
+        },
+        'default_value' => {},
+      }))
   }
   if $realize_users {
     accounts::realize_users { $realize_users: }

@@ -72,7 +72,6 @@ class accounts::sudo (
     }
   }
   if !empty($sudoers) {
-    $_sudoers = hiera_hash('accounts::sudo::sudoers', $sudoers)
-    create_resources('accounts::sudoers', $_sudoers)
+    create_resources('accounts::sudoers', $sudoers)
   }
 }
