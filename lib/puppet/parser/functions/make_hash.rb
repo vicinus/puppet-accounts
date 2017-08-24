@@ -35,7 +35,8 @@ EOS
     if item.is_a? String
       keyvalue = item
       if options.has_key?('hiera_key')
-        item = call_function('hiera_hash', [options['hiera_key'].gsub(/%k/, keyvalue), {}])
+        #item = call_function('hiera_hash', [options['hiera_key'].gsub(/%k/, keyvalue), {}])
+       item = call_function('lookup', [options['hiera_key'].gsub(/%k/, keyvalue), Puppet::Type.type(Hash), 'deep', {}])
       else
         item = {}
       end
