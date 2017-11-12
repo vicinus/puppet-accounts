@@ -1,17 +1,17 @@
 # Class: accounts::sudo:  See README.md for documentation.
 class accounts::sudo (
-  $keep_os_defaults = true,
-  $manage_sudo_package = true,
-  $sudo_package_name = 'sudo',
-  $sudo_package_state = 'present',
-  $sudoers_filename = '/etc/sudoers',
-  $sudo_global_defaults = {},
-  $sudo_global_includes = [],
-  $sudo_global_include_dirs = [],
-  $sudo_global_config = [],
-  $sudoersd = '/etc/sudoers.d',
-  $manage_sudoersd = true,
-  $sudoers = {},
+  Boolean $keep_os_defaults = true,
+  Boolean $manage_sudo_package = true,
+  String $sudo_package_name = 'sudo',
+  String $sudo_package_state = 'present',
+  Stdlib::Unixpath $sudoers_filename = '/etc/sudoers',
+  Hash $sudo_global_defaults = {},
+  Array $sudo_global_includes = [],
+  Array $sudo_global_include_dirs = [],
+  Array $sudo_global_config = [],
+  Stdlib::Unixpath $sudoersd = '/etc/sudoers.d',
+  Boolean $manage_sudoersd = true,
+  Hash $sudoers = {},
 ) {
 
   if $manage_sudo_package {
@@ -22,10 +22,10 @@ class accounts::sudo (
 
   if empty($sudo_global_include_dirs) {
     if $sudoersd {
-      $real_sudo_global_include_dirs = [ $sudoersd, ]
+      $_sudo_global_include_dirs = [ $sudoersd, ]
     }
   } else {
-    $real_sudo_global_include_dirs = $sudo_global_include_dirs
+    $_sudo_global_include_dirs = $sudo_global_include_dirs
   }
 
   if $sudoersd {

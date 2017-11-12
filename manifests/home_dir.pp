@@ -1,14 +1,14 @@
 # See README.md for details.
 define accounts::home_dir (
-  $user,
-  $ssh_known_hosts = {},
-  $manage_ssh_config = undef,
-  $manage_home_dir = true,
-  $purge_home_directory = false,
-  $purge_ssh_directory = false,
-  $default_mode = '0600',
-  $group = undef,
-  $create_authorized_keys = true,
+  String $user,
+  Hash $ssh_known_hosts = {},
+  Boolean $manage_ssh_config = false,
+  Boolean $manage_home_dir = true,
+  Boolean $purge_home_directory = false,
+  Boolean $purge_ssh_directory = false,
+  Optional[Stdlib::Filemode] $default_mode = undef,
+  Optional[String] $group = undef,
+  Boolean $create_authorized_keys = true,
 ) {
   File { owner => $user, group => $group, mode => $default_mode, }
 
@@ -29,7 +29,7 @@ define accounts::home_dir (
     recurse => $purge_ssh_directory,
   }
 
-  if is_hash($ssh_known_hosts) and $ssh_known_hosts['manage'] {
+  if $ssh_known_hosts['manage'] {
     file { "${name}/.ssh/known_hosts":
       ensure  => file,
       replace => $ssh_known_hosts['replace'],

@@ -1,54 +1,39 @@
 # See README.md for details.
 define accounts::user (
-  $ensure = 'present',
-  $uid = undef,
-  $gid = undef,
-  $shell = '/bin/bash',
-  $comment = undef,
-  $home = "/home/${name}",
-  $groups = [],
-  $password = undef,
-  $locked = false,
-  $managehome = true,
-  $manage_home_dir = true,
-  $home_default_mode = undef,
-  $managedefaultgroup = true,
-  $ssh_keys = [],
-  $ssh_keys_location = undef,
-  $purge_ssh_keys = true,
-  $purge_home_directory = false,
-  $purge_ssh_directory = false,
-  $ssh_known_hosts = {},
-  $files = [],
-  $defaultfiles = [],
-  $merge_file_hashes = false,
-  $default_root_sudo = false,
-  $sudoers = [],
-  $virtual_sudoers = [],
-  $ssh_config = [],
-  $manage_ssh_config = undef,
-  $membership = 'inclusive',
+  Enum['present', 'absent'] $ensure = 'present',
+  Optional[Variant[Integer, Pattern[/^\d+$/]]] $uid = undef,
+  Optional[Variant[Integer, String]] $gid = undef,
+  Stdlib::Unixpath $shell = '/bin/bash',
+  Optional[String] $comment = undef,
+  Stdlib::Unixpath $home = "/home/${name}",
+  Array[String, Integer] $groups = [],
+  Optional[String] $password = undef,
+  Boolean $locked = false,
+  Boolean $managehome = true,
+  Boolean $manage_home_dir = true,
+  Optional[Stdlib::Filemode] $home_default_mode = undef,
+  Boolean $managedefaultgroup = true,
+  Array $ssh_keys = [],
+  Optional[Stdlib::Unixpath] $ssh_keys_location = undef,
+  Boolean $purge_ssh_keys = true,
+  Boolean $purge_home_directory = false,
+  Boolean $purge_ssh_directory = false,
+  Hash $ssh_known_hosts = {},
+  Array $files = [],
+  Array $defaultfiles = [],
+  Boolean $merge_file_hashes = false,
+  Boolean $default_root_sudo = false,
+  Array $sudoers = [],
+  Array $virtual_sudoers = [],
+  Array $ssh_config = [],
+  Optional[Boolean] $manage_ssh_config = undef,
+  Enum['inclusive', 'minimum'] $membership = 'inclusive',
 ) {
   include ::accounts
   if $manage_ssh_config == undef {
-    $real_manage_ssh_config = $::accounts::manage_ssh_config
+    $_manage_ssh_config = $::accounts::manage_ssh_config
   } else {
-    $real_manage_ssh_config = $manage_ssh_config
-  }
-  validate_re($ensure, '^(present|absent)$')
-  if $uid != undef {
-    if is_string($uid) {
-      validate_re($uid, '^\d+$')
-    } else {
-      validate_integer($uid)
-    }
-  }
-  validate_re($shell, '^/')
-  validate_string($comment)
-  validate_re($home, '^/')
-  validate_array($groups)
-  if $password != undef {
-    validate_string($password)
+    $_manage_ssh_config = $manage_ssh_config
   }
   if $gid != undef {
     case $gid {
@@ -76,11 +61,6 @@ define accounts::user (
     $shell_real = $shell
   }
 
-  if versioncmp($clientversion, '3.6') == 1 {
-    $real_purge_ssh_keys = $purge_ssh_keys
-  } else {
-    $real_purge_ssh_keys = undef
-  }
   user { $name:
     ensure         => $ensure,
     shell          => $shell_real,
@@ -92,7 +72,7 @@ define accounts::user (
     password       => $password,
     managehome     => $managehome,
     membership     => $membership,
-    purge_ssh_keys => $real_purge_ssh_keys,
+    purge_ssh_keys => $purge_ssh_keys,
   }
 
   if $gid and $gid_is_number {
@@ -110,7 +90,7 @@ define accounts::user (
       accounts::home_dir { $home:
         user                   => $name,
         group                  => $usergroupname,
-        manage_ssh_config      => $real_manage_ssh_config,
+        manage_ssh_config      => $_manage_ssh_config,
         manage_home_dir        => $manage_home_dir,
         default_mode           => $home_default_mode,
         purge_home_directory   => $purge_home_directory,
@@ -128,17 +108,17 @@ define accounts::user (
       }
     }
     if $ssh_keys_location {
-      $real_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
-      file { $real_ssh_keys_location:
+      $_ssh_keys_location = regsubst($ssh_keys_location, '%u', $name)
+      file { $_ssh_keys_location:
         ensure  => file,
         owner   => $name,
         group   => $usergroupname,
         mode    => '0600',
         replace => false,
       }
-      $ssh_keys_require = File[$real_ssh_keys_location]
+      $ssh_keys_require = File[$_ssh_keys_location]
     } else {
-      $real_ssh_keys_location = undef
+      $_ssh_keys_location = undef
       if $managehome {
         $ssh_keys_require = Accounts::Home_dir[$home]
       } else {
@@ -152,7 +132,7 @@ define accounts::user (
       }), {
       user => $name,
       require => $ssh_keys_require,
-      target => $real_ssh_keys_location,
+      target => $_ssh_keys_location,
     })
     if $merge_file_hashes {
       $merge_items = { 'merge_items' => true, }
@@ -183,7 +163,7 @@ define accounts::user (
       make_hash($ssh_config, $name), {
         homedir => $home,
         username => $name,
-        manage_ssh_config => $real_manage_ssh_config,
+        manage_ssh_config => $_manage_ssh_config,
         group => $gid,
       }
     )

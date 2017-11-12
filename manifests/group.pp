@@ -1,15 +1,10 @@
 # See README.md for details.
 define accounts::group (
-  $ensure = 'present',
-  $gid = undef,
-  $system = undef,
-  $sudoers = [],
+  Enum['present', 'absent'] $ensure = 'present',
+  Optional[Variant[Pattern[/^\d+$/],Integer]] $gid = undef,
+  Optional[Boolean] $system = undef,
+  Array $sudoers = [],
 ) {
-  validate_re($ensure, '^(present|absent)$')
-  if $gid != undef {
-    validate_integer($gid)
-  }
-
   group { $title:
     ensure => $ensure,
     gid    => $gid,

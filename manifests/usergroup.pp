@@ -1,12 +1,12 @@
 # See README.md for details.
 define accounts::usergroup (
   Enum['present', 'absent', 'ignore'] $ensure = 'present',
-  $users = undef,
-  $global_users_defaults = {},
-  $groups = undef,
-  $virtual_users = undef,
-  $realize_users = undef,
-  $realize_sudoers = undef,
+  Optional[Hash] $users = undef,
+  Hash $global_users_defaults = {},
+  Optional[Hash] $groups = undef,
+  Optional[Boolean] $virtual_users = undef,
+  Optional[Variant[String,Array[String]]] $realize_users = undef,
+  Optional[Variant[String,Array[String],Hash[String,Variant[String,Array[String]]]]] $realize_sudoers = undef,
 ) {
   if $ensure != 'ignore' {
     if $virtual_users == undef {
@@ -60,18 +60,8 @@ define accounts::usergroup (
       $_groups = $groups
     }
     create_resources($group_res, $_groups)
-  
-    if $realize_users != undef {
-      accounts::realize_users { $realize_users: }
-    }
-    if $realize_sudoers != undef {
-      if is_hash($realize_sudoers) {
-        include ::accounts
-        $real_realize_sudoers = join_keys_to_values($realize_sudoers, $::accounts::sudo_tag_splitter)
-      } else {
-        $real_realize_sudoers = $realize_sudoers
-      }
-      accounts::realize_sudoers { $real_realize_sudoers: }
-    }
+ 
+    accounts::realize_sudoers($realize_sudoers)
+    accounts::realize_users($realize_users)
   }
 }

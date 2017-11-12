@@ -17,6 +17,6 @@
 <%- @sudo_global_includes.sort.each do |value| -%>
   <%- %>#include <%= value %>
 <%- end -%>
-<%- @real_sudo_global_include_dirs.sort.each do |value| -%>
+<%- @_sudo_global_include_dirs.sort.each do |value| -%>
   <%- %>#includedir <%= value %>
 <%- end -%>

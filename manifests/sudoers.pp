@@ -1,25 +1,23 @@
 # See README.md for details.
 define accounts::sudoers (
-  $filename = $title,
-  $users = undef,
-  $hosts = 'ALL',
-  $cmnds = 'ALL',
-  $comment = undef,
-  $ensure = 'present',
-  $runas = 'root',
-  $tags = [],
-  $defaults = [],
-  $host_defaults = [],
-  $user_defaults = [],
-  $cnmd_defaults = [],
-  $runas_defaults = [],
-  $sudoersd = undef,
-  $order = undef,
-  $sudoers_fragment = false,
+  Enum['present', 'absent'] $ensure = 'present',
+  String $filename = $title,
+  Optional[String] $users = undef,
+  String $hosts = 'ALL',
+  String $cmnds = 'ALL',
+  Optional[String] $comment = undef,
+  String $runas = 'root',
+  Array[String] $tags = [],
+  Array[String] $defaults = [],
+  Array[String] $host_defaults = [],
+  Array[String] $user_defaults = [],
+  Array[String] $cnmd_defaults = [],
+  Array[String] $runas_defaults = [],
+  Optional[String] $sudoersd = undef,
+  Optional[Variant[String, Integer]] $order = undef,
+  Boolean $sudoers_fragment = false,
 ) {
   include ::accounts::sudo
-  validate_re($filename, '^[a-z_][a-zA-Z0-9_-]*$')
-  validate_re($ensure, '^(present|absent)$')
   if $sudoersd {
     $sudoers_filename = "${sudoersd}/${filename}"
   } else {
@@ -27,13 +25,6 @@ define accounts::sudoers (
   }
 
   if $ensure == 'present' {
-    if (!$clientversion or versioncmp($clientversion, '3.5') == 1) and (!$serverversion or versioncmp($serverversion, '3.5') == 1) {
-      $validate_cmd = '/usr/sbin/visudo -c -f %'
-    } else {
-      $validate_cmd = undef
-      validate_cmd(template('accounts/sudoers.erb'), '/usr/sbin/visudo -c -f', 'visudo failed for sudoers')
-    }
-
     if $sudoers_fragment {
       concat::fragment { $name:
         target  => $sudoers_fragment,
@@ -47,7 +38,7 @@ define accounts::sudoers (
         owner        => 'root',
         group        => 'root',
         mode         => '0440',
-        validate_cmd => $validate_cmd,
+        validate_cmd => '/usr/sbin/visudo -c -f %',
       }
     }
   } else {
