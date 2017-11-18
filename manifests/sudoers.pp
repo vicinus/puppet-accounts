@@ -18,10 +18,11 @@ define accounts::sudoers (
   Boolean $sudoers_fragment = false,
 ) {
   include ::accounts::sudo
+  $_filename = regsubst($filename, '\.', '_', 'G')
   if $sudoersd {
-    $sudoers_filename = "${sudoersd}/${filename}"
+    $sudoers_filename = "${sudoersd}/${_filename}"
   } else {
-    $sudoers_filename = "${accounts::sudo::sudoersd}/${filename}"
+    $sudoers_filename = "${accounts::sudo::sudoersd}/${_filename}"
   }
 
   if $ensure == 'present' {
