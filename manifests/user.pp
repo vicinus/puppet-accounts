@@ -35,16 +35,14 @@ define accounts::user (
   } else {
     $_manage_ssh_config = $manage_ssh_config
   }
-  if $gid != undef {
-    case $gid {
-      /^\d+$/, Integer[0]: {
-        $usergroupname = $name
-        $gid_is_number = true
-      }
-      default: {
-        $usergroupname = $gid
-        $gid_is_number = false
-      }
+  case $gid {
+    /^\d+$/, Integer[0]: {
+      $usergroupname = $name
+      $gid_is_number = true
+    }
+    default: {
+      $usergroupname = $gid
+      $gid_is_number = false
     }
   }
 
