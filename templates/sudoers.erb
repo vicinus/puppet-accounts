@@ -10,7 +10,7 @@
 <%- end -%>
 <%- if @users -%>
   <%- if @users.is_a? Array then -%>
-    <%- users="#{@name.upcase}_USERS" -%>
+    <%- users="#{@name.gsub('-','_').upcase}_USERS" -%>
     <%- %>User_Alias <%= users %> = <%= @users.join(", ") %>
   <%- else -%>
     <%- users=@users -%>
@@ -21,7 +21,7 @@
 <%- end -%>
 <%- if @hosts then -%>
   <%- if @hosts.is_a? Array then -%>
-    <%- hosts="#{@name.upcase}_HOSTS" -%>
+    <%- hosts="#{@name.gsub('-','_').upcase}_HOSTS" -%>
     <%- %>Host_Alias <%= hosts %> = <%= @hosts.join(", ") %>
   <%- else -%>
     <%- hosts=@hosts -%>
@@ -32,7 +32,7 @@
 <%- end -%>
 <%- if @runas then -%>
   <%- if @runas.is_a? Array then -%>
-    <%- runas="#{@name.upcase}_RUNAS" -%>
+    <%- runas="#{@name.gsub('-','_').upcase}_RUNAS" -%>
     <%- %>Runas_Alias <%= runas %> = <%= @runas.join(", ") %>
   <%- else -%>
     <%- runas=@runas -%>
@@ -43,7 +43,7 @@
 <%- end -%>
 <%- if @cmnds then -%>
   <%- if @cmnds.is_a? Array then -%>
-    <%- cmnds="#{@name.upcase}_CMNDS" -%>
+    <%- cmnds="#{@name.gsub('-','_').upcase}_CMNDS" -%>
     <%- %>Cmnd_Alias <%= cmnds %> = <%= @cmnds.is_a?(Array) ? @cmnds.join(", ") : @cmnds %>
   <%- else -%>
     <%- cmnds=@cmnds -%>
