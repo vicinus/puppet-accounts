@@ -2,7 +2,7 @@
 define accounts::ssh_config (
   String $username,
   Enum['present', 'absent'] $ensure = 'present',
-  Optional[String] $host = undef,
+  Optional[Variant[Array[String],String]] $host = undef,
   Optional[String] $hostname = undef,
   Optional[Stdlib::Unixpath] $homedir = undef,
   Optional[Variant[Integer, String]] $order = undef,

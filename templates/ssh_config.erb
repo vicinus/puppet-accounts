@@ -1,5 +1,9 @@
 <%- if @host then -%>
+<%- if @host.is_a? Array then -%>
+Host <%= @host.join(' ') %>
+<%- else -%>
 Host <%= @host %>
+<%- end -%>
   <%- if @hostname then -%>
   Hostname <%= @hostname %>
   <%- end -%>
