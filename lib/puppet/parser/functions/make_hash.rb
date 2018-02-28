@@ -9,14 +9,25 @@ EOS
   if args.length == 2
     if args[1].is_a? String
       keyprefix = "#{args[1]}_"
+      keysuffix = false
       keyname = false
       options = {}
     else
       options = args[1]
+      if options.has_key?('keymerger')
+        keymerger = options['keymerger']
+      else
+        keymerger = '_'
+      end
       if options.has_key?('keyprefix')
         keyprefix = "#{options['keyprefix']}_"
       else
         keyprefix = ''
+      end
+      if options.has_key?('keysuffix')
+        keysuffix = options['keysuffix']
+      else
+        keysuffix = false
       end
       if options.has_key?('keyname')
         keyname = options['keyname']
@@ -26,6 +37,7 @@ EOS
     end
   else
     keyprefix = ''
+    keysuffix = false
     keyname = false
     options = {}
   end
@@ -41,13 +53,17 @@ EOS
         item = {}
       end
     else
-      if keyname and item.has_key?(keyname)
-        keyvalue = item[keyname]
+      if keysuffix and item.has_key?(keysuffix)
+        keyvalue = item[keysuffix]
       else
         keyvalue = index
       end
     end
-    key = "#{keyprefix}#{keyvalue}"
+    if keyname and item.has_key?(keyname)
+      key = item[keyname]
+    else
+      key = "#{keyprefix}#{keyvalue}"
+    end
     if res.has_key?(key) and options.has_key?('merge_items')
       res[key] = function_accounts_deepmerge([res[key], item])
     else

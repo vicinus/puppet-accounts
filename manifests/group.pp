@@ -5,13 +5,18 @@ define accounts::group (
   Optional[Boolean] $system = undef,
   Array $sudoers = [],
 ) {
-  group { $title:
+  ensure_resource('group', $title, {
     ensure => $ensure,
     gid    => $gid,
     system => $system,
-  }
+  })
 
-  create_resources('accounts::sudoers', make_hash($sudoers, $title), {
+  create_resources('accounts::sudoers',
+    make_hash($sudoers, {
+      'keyprefix' => $title,
+      'keyname'   => 'filename',
+    }),
+  {
     ensure => $ensure,
     users  => "%${title}",
   })

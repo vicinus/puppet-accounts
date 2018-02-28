@@ -8,6 +8,7 @@ define accounts::user (
   Stdlib::Unixpath $home = "/home/${name}",
   Array[String, Integer] $groups = [],
   Optional[String] $password = undef,
+  Optional[Enum['MD5','SHA-256','SHA-512']] $password_hash = undef,
   Boolean $locked = false,
   Boolean $managehome = true,
   Boolean $manage_home_dir = true,
@@ -67,7 +68,7 @@ define accounts::user (
     uid            => $uid,
     gid            => $gid,
     groups         => $groups,
-    password       => $password,
+    password       => $password_hash ? { undef => $password, default => pw_hash($password, $password_hash, fqdn_rand_string(10)) },
     managehome     => $managehome,
     membership     => $membership,
     purge_ssh_keys => $purge_ssh_keys,
@@ -126,7 +127,7 @@ define accounts::user (
     create_resources('ssh_authorized_key',
       make_hash($ssh_keys, {
         'keyprefix' => $name,
-        'keyname' => 'name',
+        'keysuffix' => 'name',
       }), {
       user => $name,
       require => $ssh_keys_require,
@@ -140,7 +141,7 @@ define accounts::user (
     create_resources('exfile',
       make_hash(concat($defaultfiles,$files), merge({
         'keyprefix' => $name,
-        'keyname' => 'path',
+        'keysuffix' => 'path',
       }, $merge_items)), {
         basedir => $home,
         owner => $uid,
