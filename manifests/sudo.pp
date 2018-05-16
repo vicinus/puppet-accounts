@@ -12,6 +12,7 @@ class accounts::sudo (
   Stdlib::Unixpath $sudoersd = '/etc/sudoers.d',
   Boolean $manage_sudoersd = true,
   Hash $sudoers = {},
+  Optional[Hash[String,Hash[String,String]]] $env_files = undef,
 ) {
 
   if $manage_sudo_package {
@@ -73,5 +74,14 @@ class accounts::sudo (
   }
   if !empty($sudoers) {
     create_resources('accounts::sudoers', $sudoers)
+  }
+
+  if $env_files != undef {
+    $env_files.each |$filename, $config| {
+      file { $filename:
+        ensure  => file,
+        content => join(suffix(join_keys_to_values($config,'=\''),'\''),"\n"),
+      }
+    }
   }
 }
