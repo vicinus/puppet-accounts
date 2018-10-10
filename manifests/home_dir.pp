@@ -29,13 +29,8 @@ define accounts::home_dir (
     recurse => $purge_ssh_directory,
   }
 
-  if $ssh_known_hosts['manage'] {
-    file { "${name}/.ssh/known_hosts":
-      ensure  => file,
-      replace => $ssh_known_hosts['replace'],
-      content => $ssh_known_hosts['content'],
-      source  => $ssh_known_hosts['source'],
-    }
+  file { "${name}/.ssh/known_hosts":
+    *  => $ssh_known_hosts,
   }
 
   if $create_authorized_keys {
