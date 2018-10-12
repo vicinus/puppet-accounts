@@ -1,6 +1,7 @@
 # See README.md for details.
 define accounts::home_dir (
   String $user,
+  Boolean $sftponly = false,
   Hash $ssh_known_hosts = {},
   Boolean $manage_ssh_config = false,
   Boolean $manage_home_dir = true,
@@ -15,6 +16,8 @@ define accounts::home_dir (
   if $manage_home_dir {
     file { $name:
       ensure  => directory,
+      owner   => ($sftponly ? { true => 'root', false => undef }),
+      group   => ($sftponly ? { true => 'root', false => undef }),
       purge   => $purge_home_directory,
       force   => $purge_home_directory,
       recurse => $purge_home_directory,

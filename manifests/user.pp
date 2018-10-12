@@ -29,6 +29,7 @@ define accounts::user (
   Array $ssh_config = [],
   Optional[Boolean] $manage_ssh_config = undef,
   Enum['inclusive', 'minimum'] $membership = 'inclusive',
+  Boolean $sftponly = false,
 ) {
   include ::accounts
   if $manage_ssh_config == undef {
@@ -40,6 +41,10 @@ define accounts::user (
     /^\d+$/, Integer[0]: {
       $usergroupname = $name
       $gid_is_number = true
+    }
+    undef: {
+      $usergroupname = $name
+      $gid_is_number = false
     }
     default: {
       $usergroupname = $gid
@@ -96,6 +101,7 @@ define accounts::user (
         purge_ssh_directory    => $purge_ssh_directory,
         ssh_known_hosts        => $ssh_known_hosts,
         create_authorized_keys => $ssh_keys_location == undef,
+        sftponly               => $sftponly,
         require                => [ User[$name], ],
       }
     }
@@ -145,7 +151,7 @@ define accounts::user (
       }, $merge_items)), {
         basedir => $home,
         owner => $uid,
-        group => $gid,
+        group => $usergroupname,
         additional_parameters => { 'name' => $title },
       }
     )
