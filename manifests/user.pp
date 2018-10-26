@@ -30,6 +30,7 @@ define accounts::user (
   Optional[Boolean] $manage_ssh_config = undef,
   Enum['inclusive', 'minimum'] $membership = 'inclusive',
   Boolean $sftponly = false,
+  Hash $sftponly_ssh_options = {},
 ) {
   include ::accounts
   if $manage_ssh_config == undef {
@@ -89,6 +90,18 @@ define accounts::user (
   if $ensure == 'present' {
     if $gid != undef and ($managedefaultgroup or $gid_is_number) {
       Group[$usergroupname] -> User[$name]
+    }
+    if $sftponly {
+      Resource[$accounts::ssh_match_resource_name] { $name:
+        type    => 'user',
+        options => merge({
+          'X11Forwarding' => 'no',
+          'AllowTCPForwarding' => 'no',
+          'GatewayPorts' => 'no',
+          'ForceCommand' => 'internal-sftp -u 0002',
+          'ChrootDirectory' => '%h',
+        }, $sftponly_ssh_options),
+      }
     }
     if $managehome {
       accounts::home_dir { $home:

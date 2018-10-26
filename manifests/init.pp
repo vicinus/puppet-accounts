@@ -12,6 +12,7 @@ class accounts (
   Boolean $virtual_users = false,
   Optional[Variant[String,Array[String]]] $realize_users = undef,
   Optional[Variant[String,Array[String],Hash[String,Variant[String,Array[String]]]]] $realize_sudoers = undef,
+  String $ssh_match_resource_name = 'ssh::match',
 ) {
   if $manage_sudo {
     include ::accounts::sudo
