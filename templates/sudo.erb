@@ -1,3 +1,6 @@
+<%- if @default_env_file -%>
+Defaults env_file = "<%= @default_env_filename %>"
+<%- end -%>
 <%- @sudo_global_defaults.sort.each do |key, value| -%>
   <%- if value.class == TrueClass -%>
     <%- %>Defaults <%= key %>
