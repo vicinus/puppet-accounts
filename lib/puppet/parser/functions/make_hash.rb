@@ -8,7 +8,8 @@ EOS
   iarray = args[0]
   if args.length == 2
     if args[1].is_a? String
-      keyprefix = "#{args[1]}_"
+      keyprefix = "#{args[1]}"
+      keymerger = '_'
       keysuffix = false
       keyname = false
       options = {}
@@ -20,7 +21,7 @@ EOS
         keymerger = '_'
       end
       if options.has_key?('keyprefix')
-        keyprefix = "#{options['keyprefix']}_"
+        keyprefix = "#{options['keyprefix']}"
       else
         keyprefix = ''
       end
@@ -62,7 +63,14 @@ EOS
     if keyname and item.has_key?(keyname)
       key = item[keyname]
     else
-      key = "#{keyprefix}#{keyvalue}"
+      if keyprefix == ''
+        key = keyvalue
+      else
+        key = "#{keyprefix}#{keymerger}#{keyvalue}"
+        if keysuffix == 'name' and keyprefix != keyvalue
+          item['name'] = key
+        end
+      end
     end
     if res.has_key?(key) and options.has_key?('merge_items')
       res[key] = function_accounts_deepmerge([res[key], item])
