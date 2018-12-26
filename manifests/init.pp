@@ -25,7 +25,7 @@ class accounts (
   if $manage_users {
     if $managed_users {
       create_resources('accounts::user', $managed_users,
-        accounts_deepmerge(
+        deep_merge(
           $managed_users_global_defaults,
           $managed_users_defaults
         )

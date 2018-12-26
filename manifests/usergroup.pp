@@ -21,7 +21,7 @@ define accounts::usergroup (
       $user_accounts_res = 'accounts::user'
     }
     $group_res = 'accounts::group'
-    $users_defaults = accounts_deepmerge($global_users_defaults,
+    $users_defaults = deep_merge($global_users_defaults,
         lookup({
           'name' => "accounts::usergroup::${name}::defaults",
           'value_type' => Hash,
