@@ -6,7 +6,7 @@ define accounts::ssh_config (
   Optional[String] $hostname = undef,
   Optional[Stdlib::Unixpath] $homedir = undef,
   Optional[Variant[Integer, String]] $order = undef,
-  Optional[String] $key = undef,
+  Optional[Variant[String, Sensitive]] $key = undef,
   Optional[String] $group = undef,
   Boolean $manage_ssh_config = true,
 
@@ -114,19 +114,24 @@ define accounts::ssh_config (
     } else {
       $_identity_file = "${_homedir}/.ssh/${identity_file}"
     }
-  } elsif $key {
+  } elsif $key != undef {
     $_identity_file = "${_homedir}/.ssh/${name}.key"
   } else {
     $_identity_file = undef
   }
-  if $key {
+  if $key  != undef {
+    if $key =~ Sensitive {
+      $_key = $key.unwrap
+    } else {
+      $_key = $key
+    }
     file { $_identity_file:
       ensure  => $ensure,
       owner   => $username,
       group   => $group,
       mode    => '0600',
       require => Accounts::Home_dir[$_homedir],
-      content => "${key}\n",
+      content => "${_key}\n",
     }
   }
 
